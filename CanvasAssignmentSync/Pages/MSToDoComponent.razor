@@ -1,0 +1,31 @@
+﻿<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <h3>Microsoft To-Do Settings</h3>
+    <div class="row">
+        <label>
+            Client Id
+            <InputText class="form-control" id="clientid" @bind-Value="model.ClientId"></InputText>
+        </label>
+    </div>
+
+    <div class=row>
+    <label>
+        Client Secret
+        <InputText class="form-control"  id="clientsecret" @bind-Value="model.ClientSecret"></InputText>
+    </label>
+    </div>
+    <div class="row">
+        <button type="submit" class="btn btn-primary">Apply</button>
+    </div>
+    <ValidationSummary/>
+
+</EditForm>
+
+@code {
+    MSToDoSettings model = new MSToDoSettings();
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("Valid!");
+    }
+}

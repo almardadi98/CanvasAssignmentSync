@@ -1,0 +1,63 @@
+﻿<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <h3>Canvas Settings</h3>
+    <div class="row">
+        <label>
+            API URI
+            <InputText class="form-control" id="apiuri" @bind-Value="model.APIURI"></InputText>
+        </label>
+    </div>
+
+    <div class=row>
+    <label>
+        API Key
+        <InputText class="form-control" id="apikey" @bind-Value="model.APIKey"></InputText>
+    </label>
+    </div>
+    <div class="row">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Course</td>
+                    <td>Sync enabled</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var course in courseList)
+                {
+                    <tr>
+                        <td>@course.Name</td>
+                        <td><InputCheckbox class="form-switch" @bind-Value="@course.ShouldSync"></InputCheckbox></td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+    
+    <div class="row">
+        <button type="submit" class="btn btn-primary">Apply</button>
+    </div>
+
+    <ValidationSummary/>
+
+</EditForm>
+
+@code {
+    public List<Course> courseList = new List<Course>
+    {
+        new Course {Name="Stærðfræði 2", ShouldSync=true, ID=100},
+        new Course {Name="Línuleg Algebra með tölvunarfræði", ShouldSync=true, ID=101},
+        new Course {Name="Kerfisgreining og kerfishönnun", ShouldSync=false, ID=110},
+        new Course {Name="Nýsköpun og stofnun fyrirtækja", ShouldSync=false, ID=111},
+    };
+
+    CanvasSettings model = new CanvasSettings();
+
+    private void HandleValidSubmit()
+    {
+        var canvasSettingsHandler = new SettingsHandler<CanvasSettings>(model);
+        canvasSettingsHandler.WriteSettingsToFile();
+    }
+}
