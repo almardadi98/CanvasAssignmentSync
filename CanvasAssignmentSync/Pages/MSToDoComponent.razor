@@ -1,4 +1,7 @@
-﻿<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <h3>Microsoft To-Do Settings</h3>
     <div class="row">
@@ -14,9 +17,7 @@
         <InputText class="form-control"  id="clientsecret" @bind-Value="model.ClientSecret"></InputText>
     </label>
     </div>
-    <div class="row">
-        <button type="submit" class="btn btn-primary">Apply</button>
-    </div>
+    <button type="submit" class="btn btn-primary">Apply</button>
     <ValidationSummary/>
 
 </EditForm>
@@ -26,6 +27,8 @@
 
     private void HandleValidSubmit()
     {
-        Console.WriteLine("Valid!");
+        var path = Configuration["MSTodoSettingsPath"];
+        var mstodoSettingsHandler = new SettingsHandler<MSToDoSettings>(model, path);
+        mstodoSettingsHandler.WriteSettingsToFile();
     }
 }

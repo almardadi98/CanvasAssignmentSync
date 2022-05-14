@@ -30,6 +30,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddSingleton<CanvasService>();
 
 var app = builder.Build();
 

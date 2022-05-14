@@ -1,4 +1,9 @@
-﻿<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+﻿@using CanvasAssignmentSync.Data
+@inject CanvasService CanvasService
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <h3>Canvas Settings</h3>
     <div class="row">
@@ -36,28 +41,28 @@
 
     </div>
     
-    <div class="row">
-        <button type="submit" class="btn btn-primary">Apply</button>
-    </div>
+    <button type="submit" class="btn btn-primary">Apply</button>
 
     <ValidationSummary/>
 
 </EditForm>
 
 @code {
-    public List<Course> courseList = new List<Course>
-    {
-        new Course {Name="Stærðfræði 2", ShouldSync=true, ID=100},
-        new Course {Name="Línuleg Algebra með tölvunarfræði", ShouldSync=true, ID=101},
-        new Course {Name="Kerfisgreining og kerfishönnun", ShouldSync=false, ID=110},
-        new Course {Name="Nýsköpun og stofnun fyrirtækja", ShouldSync=false, ID=111},
-    };
 
     CanvasSettings model = new CanvasSettings();
 
+    private List<Course>? courseList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        courseList = await CanvasService.GetCourseListAsync();
+    }
+
+
     private void HandleValidSubmit()
     {
-        var canvasSettingsHandler = new SettingsHandler<CanvasSettings>(model);
+        var path = Configuration["CanvasSettingsPath"];
+        var canvasSettingsHandler = new SettingsHandler<CanvasSettings>(model, path);
         canvasSettingsHandler.WriteSettingsToFile();
     }
 }
