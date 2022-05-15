@@ -1,13 +1,10 @@
-﻿using CanvasAssignmentSync.Models;
-using System;
-using System.IO;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace CanvasAssignmentSync.Src
 {
     public class SettingsHandler<T>
     {
-        T Model { get; set; }
+        public T Model { get; set; }
         string Path { get; init; }
         public SettingsHandler(T model, string path)
         {
@@ -15,10 +12,10 @@ namespace CanvasAssignmentSync.Src
             Path = path;
         }
 
-        public T? GetSettings()
+        public void GetSettings()
         {
             string jsonString = File.ReadAllText(Path);
-            return JsonSerializer.Deserialize<T>(jsonString);
+            Model = JsonSerializer.Deserialize<T>(jsonString);
         }
 
         public void WriteSettingsToFile()

@@ -3,20 +3,20 @@
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
-<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@_settings.Model" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <h3>Canvas Settings</h3>
     <div class="row">
         <label>
             API URI
-            <InputText class="form-control" id="apiuri" @bind-Value="model.APIURI"></InputText>
+            <InputText class="form-control" id="apiuri" @bind-Value="_settings.Model.APIURI"></InputText>
         </label>
     </div>
 
     <div class=row>
     <label>
         API Key
-        <InputText class="form-control" id="apikey" @bind-Value="model.APIKey"></InputText>
+        <InputText class="form-control" id="apikey" @bind-Value="_settings.Model.APIKey"></InputText>
     </label>
     </div>
     <div class="row">
@@ -24,16 +24,22 @@
             <thead>
                 <tr>
                     <td>Course</td>
+                    <td>Start date</td>
                     <td>Sync enabled</td>
                 </tr>
             </thead>
             <tbody>
-                @foreach(var course in courseList)
+                @if (courseList is not null)
                 {
-                    <tr>
-                        <td>@course.Name</td>
-                        <td><InputCheckbox class="form-switch" @bind-Value="@course.ShouldSync"></InputCheckbox></td>
-                    </tr>
+                    foreach(var course in courseList)
+                    {
+                        <tr>
+                            <td>@course.Name</td>
+                            <td>@(course.StartAt.ToString("dd/MM/yyyy"))</td>
+                            <td><InputCheckbox class="form-switch" @bind-Value="@course.ShouldSync"></InputCheckbox></td>
+                        </tr>
+                    }
+                    
                 }
             </tbody>
 
@@ -48,21 +54,32 @@
 </EditForm>
 
 @code {
-
-    CanvasSettings model = new CanvasSettings();
+    // TODO bæta við takka til að fá token
 
     private List<Course>? courseList;
+    private SettingsHandler<CanvasSettings>? _settings;
+    //private CanvasSettings _model; // Todo skoða SettingsHandler architecture
+    // Þetta þarf að vera h+erna fyrir razor síðuna. En hvernig á þá að lesa úr json skránni og setja inn í modelið?
+    // Lets find out after I get some sleep.
+
+
+    protected override void OnInitialized()
+    {
+        var path = Configuration["CanvasSettingsPath"];
+        _settings = new SettingsHandler<CanvasSettings>(new CanvasSettings(), path);
+        _settings.GetSettings();
+    }
 
     protected override async Task OnInitializedAsync()
     {
         courseList = await CanvasService.GetCourseListAsync();
+        courseList?.Sort();
     }
-
+    
 
     private void HandleValidSubmit()
     {
-        var path = Configuration["CanvasSettingsPath"];
-        var canvasSettingsHandler = new SettingsHandler<CanvasSettings>(model, path);
-        canvasSettingsHandler.WriteSettingsToFile();
+
+        _settings.WriteSettingsToFile();
     }
 }

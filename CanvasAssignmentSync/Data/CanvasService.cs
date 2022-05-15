@@ -1,27 +1,59 @@
 ﻿using CanvasAssignmentSync.Models;
+using Microsoft.Net.Http.Headers;
 
 namespace CanvasAssignmentSync.Data
 {
     public class CanvasService
     {
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
 
-
-        public List<Course> CoursesList { get; set; }
-
-        private List<Course> fakecourseList = new List<Course>
+        public CanvasService(HttpClient httpClient, IConfiguration configuration)
         {
-            new Course {Name="Stærðfræði 2", ShouldSync=true, ID=100},
-            new Course {Name="Línuleg Algebra með tölvunarfræði", ShouldSync=true, ID=101},
-            new Course {Name="Kerfisgreining og kerfishönnun", ShouldSync=false, ID=110},
-            new Course {Name="Nýsköpun og stofnun fyrirtækja", ShouldSync=true, ID=111},
-        };
+            _httpClient = httpClient;
+            _configuration = configuration;
+            // TODO configuration injection (secret store)
+            _httpClient.BaseAddress = new Uri(_configuration["Canvas:APIURI"]);
 
-        public async Task<List<Course>> GetCourseListAsync()
-        {
 
-            return await Task.FromResult(fakecourseList);
+            _httpClient.DefaultRequestHeaders.Add(
+                HeaderNames.Authorization, $"Bearer {_configuration["Canvas:APIKey"]}");
         }
 
+        public async Task<List<Course>?> GetCourseListAsync()
+        {
+
+            return await _httpClient.GetFromJsonAsync<List<Course>>("courses");
+        }
+
+        // Get all assignments for courses that have synchronization enabled
+        public async Task<List<Assignment>?> GetAssignmentListAsync()
+        {
+            var courses = await GetCourseListAsync();
+            if(courses is null)
+            {
+                return null;
+            }
+            List<Assignment> assignmentList = new List<Assignment>();
+
+            foreach(var course in courses)
+            {
+                var assignments = await _httpClient.GetFromJsonAsync<List<Assignment>>($"courses/{course.ID}/assignments");
+                if (assignments is not null)
+                {
+                    assignmentList.AddRange(assignments);
+                }
+            }
+            return assignmentList;
+        }
+
+        // Ekki nota?
+        // Betra að queryia alla í byrjun og geyma í minni
+        public async Task<string?> GetCourseNameAsync(int Id)
+        {
+            var course = await _httpClient.GetFromJsonAsync<Course>($"courses/{Id}");
+            return course?.Name;
+        }
 
     }
 }

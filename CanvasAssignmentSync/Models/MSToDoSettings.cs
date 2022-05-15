@@ -5,12 +5,10 @@ namespace CanvasAssignmentSync.Models
     public class MSToDoSettings
     {
         [Required]
-        [Display(Name ="Client Id")]
-        public string ClientId { get; set; }
+        public string? ClientId { get; set; }
 
         [Required]
-        [Display(Name = "Client Secret")]
-        public string ClientSecret { get; set; }
+        public string? ClientSecret { get; set; }
 
     }
 }

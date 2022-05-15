@@ -6,12 +6,10 @@ namespace CanvasAssignmentSync.Models
     {
         [Required]
         [Url]
-        [Display(Name = "API URI")]
-        public string APIURI { get; set; }
+        public string? APIURI { get; set; }
 
         [Required]
-        [Display(Name = "API Key")]
-        public string APIKey { get; set; }
+        public string? APIKey { get; set; }
 
     }
 }

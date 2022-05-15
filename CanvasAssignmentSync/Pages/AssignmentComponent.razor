@@ -1,0 +1,56 @@
+﻿@using CanvasAssignmentSync.Data
+@inject CanvasService CanvasService
+<h3>Assignments</h3>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <td><strong>Name</strong></td>
+            <td><strong>Created at</strong></td>
+            <td><strong>Due at</strong></td>
+            <td><strong>Description</strong></td>
+        </tr>
+    </thead>
+    <tbody>
+            @if (assignmentList is null)
+            {
+                <tr>
+                    <td colspan="4">
+                        <div class="d-flex justify-content-center">
+                             <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            } else {
+                foreach(var assignment in assignmentList)
+                {
+                    <tr>
+                        <td>@assignment.Name</td>    
+                        <td>@(assignment.CreatedAt.ToString("dd/MM/yyyy"))</td>    
+                        <td>@assignment.DueAt?.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <button class="btn dropdown-toggle" type="button">
+                                    
+                            </button>
+                        </td>
+                    </tr>
+                    <tr colspan="4" class="visually-hidden">
+                        @((MarkupString)assignment.Description)
+                    </tr>
+                }
+            }
+    </tbody>
+</table>
+
+@code {
+    private List<Assignment> assignmentList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        assignmentList = await CanvasService.GetAssignmentListAsync();
+        assignmentList.Sort();
+    }
+    
+
+}
