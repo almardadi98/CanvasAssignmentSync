@@ -15,7 +15,6 @@ namespace CanvasAssignmentSync.Data
             // TODO configuration injection (secret store)
             _httpClient.BaseAddress = new Uri(_configuration["Canvas:APIURI"]);
 
-
             _httpClient.DefaultRequestHeaders.Add(
                 HeaderNames.Authorization, $"Bearer {_configuration["Canvas:APIKey"]}");
         }

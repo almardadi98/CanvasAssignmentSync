@@ -1,0 +1,64 @@
+﻿@page "/testing"
+@using Syncfusion.Blazor.Grids
+@using CanvasAssignmentSync.Data
+@inject CanvasService CanvasService
+
+
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+            <SfGrid DataSource="@Courses" @ref="CourseGrid">
+                <GridEditSettings AllowEditing="false"></GridEditSettings>
+                <GridSelectionSettings EnableToggle="true" PersistSelection="true"></GridSelectionSettings> 
+                <GridEvents RowSelected="GetSelectedCourses" RowDeselected="GetSelectedCourses" TValue="Course"></GridEvents>
+                <GridColumns>
+                    <GridColumn Field=@nameof(Course.Name) HeaderText="Name" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(Course.StartAt) HeaderText="Start Date" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Center" Width="130"></GridColumn>
+                    <GridColumn HeaderText="Sync Enabled" Type="ColumnType.CheckBox" Width="50">
+                        <HeaderTemplate>
+                        </HeaderTemplate>
+                    </GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+</div>
+@code{
+    [Parameter] public List<Course> Courses { get; set; }
+
+    SfGrid<Course> CourseGrid;
+    public List<Course> CourseGridValues;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Courses = await CanvasService.GetCourseListAsync();
+    }
+
+    public async void Show() 
+    { 
+    }
+
+    public async Task GetSelectedCourses()
+    {
+        // Get all the selected courses
+        var SelectedCourses = await CourseGrid.GetSelectedRecords();
+        // Update the bool ShouldSync for the selected courses.
+        UpdateShouldSyncStatus(Courses, SelectedCourses);
+    }
+
+    // Sets the ShouldSync bool to true for the selected courses.
+    // This assumes that SelectedCourses is a subset of Courses.
+    private void UpdateShouldSyncStatus(List<Course> Courses, List<Course> SelectedCourses)
+    {
+        // Iterate over all the courses
+        foreach (var course in Courses)
+        {
+            // If the course was selected, then mark ShouldSync as true.
+            // This will update the item in the public Courses list
+            if (SelectedCourses.Contains(course))
+            {
+                course.ShouldSync = true;
+            }
+        }
+    }
+}

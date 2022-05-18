@@ -19,40 +19,13 @@
         <InputText class="form-control" id="apikey" @bind-Value="_settings.Model.APIKey"></InputText>
     </label>
     </div>
-    <div class="row">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <td>Course</td>
-                    <td>Start date</td>
-                    <td>Sync enabled</td>
-                </tr>
-            </thead>
-            <tbody>
-                @if (courseList is not null)
-                {
-                    foreach(var course in courseList)
-                    {
-                        <tr>
-                            <td>@course.Name</td>
-                            <td>@(course.StartAt.ToString("dd/MM/yyyy"))</td>
-                            <td><InputCheckbox class="form-switch" @bind-Value="@course.ShouldSync"></InputCheckbox></td>
-                        </tr>
-                    }
-                    
-                }
-            </tbody>
-
-        </table>
-
-    </div>
     
     <button type="submit" class="btn btn-primary">Apply</button>
 
     <ValidationSummary/>
 
 </EditForm>
-
+<CourseGridComponent></CourseGridComponent>
 @code {
     // TODO bæta við takka til að fá token
 

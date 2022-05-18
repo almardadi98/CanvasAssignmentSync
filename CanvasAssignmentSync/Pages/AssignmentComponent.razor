@@ -30,18 +30,26 @@
                         <td>@(assignment.CreatedAt.ToString("dd/MM/yyyy"))</td>    
                         <td>@assignment.DueAt?.ToString("dd/MM/yyyy")</td>
                         <td>
-                            <button class="btn dropdown-toggle" type="button">
-                                    
-                            </button>
+                            <div class="control-section accordion-control-section">
+                                <SfAccordion>
+                                    <AccordionItems>
+                                        <AccordionItem Expanded="false" Header="See description" IconCss="e-athletics e-acrdn-icons">
+                                            <ContentTemplate>
+                                                @((MarkupString)assignment.Description)
+                                            </ContentTemplate>
+                                        </AccordionItem>
+                                    </AccordionItems>
+                                </SfAccordion>
+                            </div>
                         </td>
                     </tr>
-                    <tr colspan="4" class="visually-hidden">
-                        @((MarkupString)assignment.Description)
-                    </tr>
+
                 }
             }
     </tbody>
 </table>
+
+
 
 @code {
     private List<Assignment> assignmentList;
