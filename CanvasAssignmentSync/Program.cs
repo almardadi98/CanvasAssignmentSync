@@ -19,15 +19,15 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
         .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
             .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
             .AddInMemoryTokenCaches();
-//builder.Services.AddDbContext<DataContext>(x => x.UseSqlite());
-// builder.Services.AddControllersWithViews()
-//     .AddMicrosoftIdentityUI();
+builder.Services.AddDbContext<DataContext>(x => x.UseSqlite());
+builder.Services.AddControllersWithViews()
+    .AddMicrosoftIdentityUI();
 
-// builder.Services.AddAuthorization(options =>
-// {
-//     // By default, all incoming requests will be authorized according to the default policy
-//     options.FallbackPolicy = options.DefaultPolicy;
-// });
+builder.Services.AddAuthorization(options =>
+{
+    // By default, all incoming requests will be authorized according to the default policy
+    options.FallbackPolicy = options.DefaultPolicy;
+});
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()

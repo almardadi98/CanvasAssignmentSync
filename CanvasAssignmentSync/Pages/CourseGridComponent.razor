@@ -1,6 +1,7 @@
 ﻿@page "/testing"
 @using Syncfusion.Blazor.Grids
 @using CanvasAssignmentSync.Data
+@using CanvasAssignmentSync.Models
 @inject CanvasService CanvasService
 
 
@@ -35,21 +36,26 @@
     public List<Course> CourseGridValues;
 
 
-    protected override void OnInitialized()
-    {
 
-    }
     protected override async Task OnInitializedAsync()
     {
         Courses = await CanvasService.GetCourseListAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
 
     }
+
 
     // Selects the rows of the courses that have ShouldSync == true
     private async Task SetCourseStatus(object args)
     {
-        var indexes = GetSyncEnabledCourseIndexes(Courses); // Might be null. Need to fix fix
-        await CourseGrid.SelectRowsAsync(indexes.ToArray());
+        if (Courses != null)
+        {
+            var indexes = GetSyncEnabledCourseIndexes(Courses);
+            await CourseGrid.SelectRowsAsync(indexes.ToArray());
+        }
     }
     private List<double> GetSyncEnabledCourseIndexes(List<Course> courses)
     {
@@ -66,9 +72,6 @@
         return indexes;
     }
 
-    public async void Show()
-    {
-    }
 
     public async Task GetSelectedCourses()
     {
