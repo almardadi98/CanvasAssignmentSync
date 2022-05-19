@@ -7,13 +7,18 @@
 <div class="col-lg-12 control-section">
     <div class="content-wrapper">
         <div class="row">
-            <SfGrid DataSource="@Courses" @ref="CourseGrid">
-                <GridEditSettings AllowEditing="false"></GridEditSettings>
-                <GridSelectionSettings EnableToggle="true" PersistSelection="true"></GridSelectionSettings> 
-                <GridEvents RowSelected="GetSelectedCourses" RowDeselected="GetSelectedCourses" TValue="Course"></GridEvents>
+            <SfGrid DataSource="@Courses" @ref="CourseGrid" AllowTextWrap="false" AllowGrouping="false"
+                AllowSorting="true" AllowSelection="true" AllowPaging="true" AllowFiltering="true" Height="auto">
+                <GridSelectionSettings Mode="SelectionMode.Row" CheckboxOnly="true" PersistSelection="true"
+                    Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
+                <GridEvents DataBound="SetCourseStatus" RowSelected="GetSelectedCourses"
+                    RowDeselected="GetSelectedCourses" TValue="Course">
+                </GridEvents>
                 <GridColumns>
-                    <GridColumn Field=@nameof(Course.Name) HeaderText="Name" TextAlign="TextAlign.Left" Width="120"></GridColumn>
-                    <GridColumn Field=@nameof(Course.StartAt) HeaderText="Start Date" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Center" Width="130"></GridColumn>
+                    <GridColumn Field=@nameof(Course.Name) HeaderText="Name" TextAlign="TextAlign.Left" Width="120">
+                    </GridColumn>
+                    <GridColumn Field=@nameof(Course.StartAt) HeaderText="Start Date" Format="d" Type="ColumnType.Date"
+                        TextAlign="TextAlign.Center" Width="130"></GridColumn>
                     <GridColumn HeaderText="Sync Enabled" Type="ColumnType.CheckBox" Width="50">
                         <HeaderTemplate>
                         </HeaderTemplate>
@@ -23,19 +28,46 @@
         </div>
     </div>
 </div>
-@code{
-    [Parameter] public List<Course> Courses { get; set; }
+@code {
+    private List<Course> Courses { get; set; }
 
-    SfGrid<Course> CourseGrid;
+    public SfGrid<Course> CourseGrid;
     public List<Course> CourseGridValues;
 
+
+    protected override void OnInitialized()
+    {
+
+    }
     protected override async Task OnInitializedAsync()
     {
         Courses = await CanvasService.GetCourseListAsync();
+
     }
 
-    public async void Show() 
-    { 
+    // Selects the rows of the courses that have ShouldSync == true
+    private async Task SetCourseStatus(object args)
+    {
+        var indexes = GetSyncEnabledCourseIndexes(Courses);
+        await CourseGrid.SelectRowsAsync(indexes.ToArray());
+    }
+    private List<double> GetSyncEnabledCourseIndexes(List<Course> courses)
+    {
+        var indexes = new List<double>();
+        int index = 0;
+        foreach (var course in courses)
+        {
+            if (course.ShouldSync == true)
+            {
+                indexes.Add(index);
+            }
+            index++;
+        }
+        return indexes;
+    }
+
+    public async void Show()
+    {
     }
 
     public async Task GetSelectedCourses()

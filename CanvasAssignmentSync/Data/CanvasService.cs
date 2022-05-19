@@ -18,24 +18,33 @@ namespace CanvasAssignmentSync.Data
             _httpClient.DefaultRequestHeaders.Add(
                 HeaderNames.Authorization, $"Bearer {_configuration["Canvas:APIKey"]}");
         }
-
+        private void RandomizeShouldSync(List<Course> courses)
+        {
+            var random = new Random();
+            foreach (var course in courses)
+            {
+                course.ShouldSync = random.Next(2) == 1;
+            }
+        }
         public async Task<List<Course>?> GetCourseListAsync()
         {
 
-            return await _httpClient.GetFromJsonAsync<List<Course>>("courses");
+            var courses = await _httpClient.GetFromJsonAsync<List<Course>>("courses");
+            RandomizeShouldSync(courses);
+            return courses;
         }
 
         // Get all assignments for courses that have synchronization enabled
         public async Task<List<Assignment>?> GetAssignmentListAsync()
         {
             var courses = await GetCourseListAsync();
-            if(courses is null)
+            if (courses is null)
             {
                 return null;
             }
             List<Assignment> assignmentList = new List<Assignment>();
 
-            foreach(var course in courses)
+            foreach (var course in courses)
             {
                 var assignments = await _httpClient.GetFromJsonAsync<List<Assignment>>($"courses/{course.ID}/assignments");
                 if (assignments is not null)
