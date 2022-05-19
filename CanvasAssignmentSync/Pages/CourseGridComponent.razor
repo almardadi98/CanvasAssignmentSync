@@ -48,7 +48,7 @@
     // Selects the rows of the courses that have ShouldSync == true
     private async Task SetCourseStatus(object args)
     {
-        var indexes = GetSyncEnabledCourseIndexes(Courses);
+        var indexes = GetSyncEnabledCourseIndexes(Courses); // Might be null. Need to fix fix
         await CourseGrid.SelectRowsAsync(indexes.ToArray());
     }
     private List<double> GetSyncEnabledCourseIndexes(List<Course> courses)
