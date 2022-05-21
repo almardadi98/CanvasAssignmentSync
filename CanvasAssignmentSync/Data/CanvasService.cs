@@ -26,7 +26,7 @@ namespace CanvasAssignmentSync.Data
                 course.ShouldSync = random.Next(2) == 1;
             }
         }
-        public async Task<List<Course>?> GetCourseListAsync()
+        public async Task<List<Course>?> GetCoursesAsync()
         {
 
             var courses = await _httpClient.GetFromJsonAsync<List<Course>>("courses");
@@ -37,7 +37,7 @@ namespace CanvasAssignmentSync.Data
         // Get all assignments for courses that have synchronization enabled
         public async Task<List<Assignment>?> GetAssignmentListAsync()
         {
-            var courses = await GetCourseListAsync();
+            var courses = await GetCoursesAsync();
             if (courses is null)
             {
                 return null;

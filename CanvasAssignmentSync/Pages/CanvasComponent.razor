@@ -45,7 +45,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        courseList = await CanvasService.GetCourseListAsync();
+        courseList = await CanvasService.GetCoursesAsync();
         courseList?.Sort();
     }
     

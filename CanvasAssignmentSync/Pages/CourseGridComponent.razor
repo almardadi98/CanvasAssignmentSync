@@ -16,11 +16,11 @@
                     RowDeselected="GetSelectedCourses" TValue="Course">
                 </GridEvents>
                 <GridColumns>
-                    <GridColumn Field=@nameof(Course.Name) HeaderText="Name" TextAlign="TextAlign.Left" Width="120">
+                    <GridColumn Field="@nameof(Course.Name)" HeaderText="Name" TextAlign="TextAlign.Left" Width="120">
                     </GridColumn>
-                    <GridColumn Field=@nameof(Course.StartAt) HeaderText="Start Date" Format="d" Type="ColumnType.Date"
+                    <GridColumn Field="@nameof(Course.StartAt)" HeaderText="Start Date" Format="d" Type="ColumnType.Date"
                         TextAlign="TextAlign.Center" Width="130"></GridColumn>
-                    <GridColumn HeaderText="Sync Enabled" Type="ColumnType.CheckBox" Width="50">
+                    <GridColumn HeaderText="Sync Enabled" Type="ColumnType.CheckBox" aria- Width="50">
                         <HeaderTemplate>
                         </HeaderTemplate>
                     </GridColumn>
@@ -44,18 +44,18 @@
 
     protected override async Task OnParametersSetAsync()
     {
-
+        if (Courses != null)
+        {
+            var indexes = GetSyncEnabledCourseIndexes(Courses);
+            await CourseGrid.SelectRowsAsync(indexes.ToArray());
+        }
     }
 
 
     // Selects the rows of the courses that have ShouldSync == true
     private async Task SetCourseStatus(object args)
     {
-        if (Courses != null)
-        {
-            var indexes = GetSyncEnabledCourseIndexes(Courses);
-            await CourseGrid.SelectRowsAsync(indexes.ToArray());
-        }
+
     }
     private List<double> GetSyncEnabledCourseIndexes(List<Course> courses)
     {
@@ -72,6 +72,9 @@
         return indexes;
     }
 
+    public async void Show()
+    {
+    }
 
     public async Task GetSelectedCourses()
     {
