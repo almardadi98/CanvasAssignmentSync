@@ -6,16 +6,16 @@ namespace CanvasAssignmentSync.Models
     public class Course : IComparable<Course>
     {
         [Required]
-        public string Name { get; set; }
+        public string Name { get; init; } = null!;
 
         public bool ShouldSync { get; set; } = false;
 
         [Required]
-        public int ID { get; set; }
+        public int Id { get; init; }
 
         [JsonPropertyName("start_at")]
-        public DateTime StartAt { get; set; }
-        //
+        public DateTime StartAt { get; init; }
+
 
         public int CompareTo(Course other)
         {
@@ -25,7 +25,7 @@ namespace CanvasAssignmentSync.Models
 
         public override string ToString()
         {
-            return string.Format($"Name: {Name} Id: {ID} Sync active: {ShouldSync}");
+            return string.Format($"Name: {Name} Id: {Id} Sync active: {ShouldSync}");
         }
     }
 }

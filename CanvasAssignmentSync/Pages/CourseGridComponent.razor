@@ -8,19 +8,19 @@
 <div class="col-lg-12 control-section">
     <div class="content-wrapper">
         <div class="row">
-            <SfGrid DataSource="@Courses" @ref="CourseGrid" AllowTextWrap="false" AllowGrouping="false"
+            <SfGrid DataSource="@Courses" @ref="_courseGrid" AllowTextWrap="false" AllowGrouping="false"
                 AllowSorting="true" AllowSelection="true" AllowPaging="true" AllowFiltering="true" Height="auto">
                 <GridSelectionSettings Mode="SelectionMode.Row" CheckboxOnly="true" PersistSelection="true"
                     Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
-                <GridEvents DataBound="SetCourseStatus" RowSelected="GetSelectedCourses"
-                    RowDeselected="GetSelectedCourses" TValue="Course">
+                <GridEvents DataBound="SetCourseStatus" RowSelected="ProcessSelectedCourses"
+                    RowDeselected="ProcessSelectedCourses" TValue="Course">
                 </GridEvents>
                 <GridColumns>
                     <GridColumn Field="@nameof(Course.Name)" HeaderText="Name" TextAlign="TextAlign.Left" Width="120">
                     </GridColumn>
                     <GridColumn Field="@nameof(Course.StartAt)" HeaderText="Start Date" Format="d" Type="ColumnType.Date"
                         TextAlign="TextAlign.Center" Width="130"></GridColumn>
-                    <GridColumn HeaderText="Sync Enabled" Type="ColumnType.CheckBox" aria- Width="50">
+                    <GridColumn HeaderText="Sync Enabled" Type="ColumnType.CheckBox" Width="50">
                         <HeaderTemplate>
                         </HeaderTemplate>
                     </GridColumn>
@@ -30,40 +30,42 @@
     </div>
 </div>
 @code {
-    private List<Course> Courses { get; set; }
-
-    public SfGrid<Course> CourseGrid;
-    public List<Course> CourseGridValues;
-
+    private List<Course>? Courses { get; set; }
+    private SfGrid<Course> _courseGrid = null!;
 
 
     protected override async Task OnInitializedAsync()
     {
-        Courses = await CanvasService.GetCourseListAsync();
+        Courses = await CanvasService.GetCoursesAsync();
     }
 
-    protected override async Task OnParametersSetAsync()
+
+    /// <summary>
+    /// Select the rows of sync enabled courses.
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns>Task</returns>
+    private async Task SetCourseStatus(object args)
     {
         if (Courses != null)
         {
             var indexes = GetSyncEnabledCourseIndexes(Courses);
-            await CourseGrid.SelectRowsAsync(indexes.ToArray());
+            // Note that SyncFusion expects double array for indexing and not int array.
+            await _courseGrid.SelectRowsAsync(indexes.ToArray());
         }
     }
-
-
-    // Selects the rows of the courses that have ShouldSync == true
-    private async Task SetCourseStatus(object args)
-    {
-
-    }
+    /// <summary>
+    /// Returns a list of indexes of courses that have the ShouldSync bool set to true.
+    /// </summary>
+    /// <param name="courses"></param>
+    /// <returns>indexes of courses that have the ShouldSync bool set to true</returns>
     private List<double> GetSyncEnabledCourseIndexes(List<Course> courses)
     {
         var indexes = new List<double>();
-        int index = 0;
+        var index = 0;
         foreach (var course in courses)
         {
-            if (course.ShouldSync == true)
+            if (course.ShouldSync)
             {
                 indexes.Add(index);
             }
@@ -72,31 +74,46 @@
         return indexes;
     }
 
-    public async void Show()
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public async Task ProcessSelectedCourses(RowSelectEventArgs<Course> args)
     {
+
+        var selectedCourses = await _courseGrid!.GetSelectedRecords();
+        if (selectedCourses is null) return;
+
+        SetShouldSyncBool(Courses!, selectedCourses);
+        // We only need to update the selected courses. The others are unchanged.
+        await CanvasService.UpdateCoursesDbAsync(selectedCourses);
     }
 
-    public async Task GetSelectedCourses()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public async Task ProcessSelectedCourses(RowDeselectEventArgs<Course> args)
     {
-        // Get all the selected courses
-        var SelectedCourses = await CourseGrid.GetSelectedRecords();
-        // Update the bool ShouldSync for the selected courses.
-        UpdateShouldSyncStatus(Courses, SelectedCourses);
+        var deselectedCourse = args.Data;
+        // The course has been deselected.
+        deselectedCourse.ShouldSync = false;
+        // We only need to update the selected (deselected) courses. The others are unchanged.
+        await CanvasService.UpdateCourseDbAsync(deselectedCourse);
     }
 
-    // Sets the ShouldSync bool to true for the selected courses.
-    // This assumes that SelectedCourses is a subset of Courses.
-    private void UpdateShouldSyncStatus(List<Course> Courses, List<Course> SelectedCourses)
+
+    /// <summary>
+    /// Sets the ShouldSync bool to true for the selected courses. This method expects that selectedCourses is a subset of courses.
+    /// </summary>
+    /// <param name="courses"></param>
+    /// <param name="selectedCourses"></param>
+    private void SetShouldSyncBool(List<Course> courses, List<Course> selectedCourses)
     {
-        // Iterate over all the courses
-        foreach (var course in Courses)
+        foreach (var course in courses.Where(selectedCourses.Contains))
         {
-            // If the course was selected, then mark ShouldSync as true.
-            // This will update the item in the public Courses list
-            if (SelectedCourses.Contains(course))
-            {
-                course.ShouldSync = true;
-            }
+            course.ShouldSync = true;
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace CanvasAssignmentSync.Models
 {
-    public class MSToDoSettings
+    public class MsToDoSettings
     {
         [Required]
         public string? ClientId { get; set; }

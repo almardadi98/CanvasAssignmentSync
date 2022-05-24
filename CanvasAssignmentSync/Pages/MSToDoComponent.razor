@@ -1,4 +1,5 @@
-﻿@using Microsoft.Extensions.Configuration
+﻿@using CanvasAssignmentSync.Models
+@using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
 <EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
@@ -23,12 +24,12 @@
 </EditForm>
 
 @code {
-    MSToDoSettings model = new MSToDoSettings();
+    MsToDoSettings model = new MsToDoSettings();
 
     private void HandleValidSubmit()
     {
         var path = Configuration["MSTodoSettingsPath"];
-        var mstodoSettingsHandler = new SettingsHandler<MSToDoSettings>(model, path);
+        var mstodoSettingsHandler = new SettingsHandler<MsToDoSettings>(model, path);
         mstodoSettingsHandler.WriteSettingsToFile();
     }
 }

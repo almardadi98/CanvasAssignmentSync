@@ -4,17 +4,17 @@ namespace CanvasAssignmentSync.Models
 {
     public class Assignment : IComparable<Assignment>
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+        public int Id { get; init; }
+        public string? Name { get; init; }
 
         [JsonPropertyName("course_id")]
-        public int CourseId { get; set; }
+        public int CourseId { get; init; }
 
         [JsonPropertyName("due_at")]
         public DateTime? DueAt { get; set; }
 
         [JsonPropertyName("created_at")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; init; }
 
         [JsonPropertyName("updated_at")]
         public DateTime? UpdatedAt { get; set; }
@@ -28,7 +28,7 @@ namespace CanvasAssignmentSync.Models
         public string? Description { get; set; }
 
         [JsonPropertyName("html_url")]
-        public Uri? HTMLURL { get; set; }
+        public Uri? HTMLURL { get; init; }
 
         public int CompareTo(Assignment other)
         {
