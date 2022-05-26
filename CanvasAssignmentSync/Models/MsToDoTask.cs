@@ -11,7 +11,7 @@ namespace CanvasAssignmentSync.Models
         public string Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime DueAt { get; set; }
-
+        public Body? Body { get; set; }
     }
 
     public enum ContentType

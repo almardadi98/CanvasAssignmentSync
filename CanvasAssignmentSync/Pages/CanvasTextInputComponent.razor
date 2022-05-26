@@ -1,0 +1,31 @@
+﻿@using Syncfusion.Blazor.Inputs
+<h2 class="text-light">Canvas</h2>
+
+<label class="text-light">Api Uri</label>
+<SfTextBox @ref="_apiUriTextBox" @bind-Value="@_apiUri" Input="UriValidator" ShowClearButton="true" Placeholder="https://canvas.instructure.com/api/v1/"></SfTextBox>
+
+<label class="text-light">Api Key</label>
+<SfTextBox @ref="_apiKeyTextBox" ShowClearButton="true" Placeholder="YourSecretKey"></SfTextBox>
+
+
+
+@code {
+    private SfTextBox _apiUriTextBox;
+    private string _apiUri;
+
+
+    private SfTextBox _apiKeyTextBox;
+    private string _apiKey;
+
+
+
+
+
+    private void UriValidator(InputEventArgs args)
+    {
+        var uriText = args.Value;
+        var isValid = Uri.IsWellFormedUriString(uriText, UriKind.Absolute);
+        var cssClass = isValid ? "e-success" : "e-error";
+        _apiUriTextBox.CssClass = cssClass;
+    }
+}

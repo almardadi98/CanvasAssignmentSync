@@ -3,6 +3,7 @@
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
+@*
 <EditForm Model="@_settings.Model" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <h3>Canvas Settings</h3>
@@ -24,7 +25,9 @@
 
     <ValidationSummary/>
 
-</EditForm>
+</EditForm>*@
+<CanvasTextInputComponent></CanvasTextInputComponent>
+
 <CourseGridComponent></CourseGridComponent>
 @code {
     // TODO bæta við takka til að fá token

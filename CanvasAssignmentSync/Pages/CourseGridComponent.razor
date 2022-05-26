@@ -8,18 +8,19 @@
 <div class="col-lg-12 control-section">
     <div class="content-wrapper">
         <div class="row">
+            @*TODO Sorting is bugged out. Repeated sorting selects rows randomly(?)*@
             <SfGrid DataSource="@Courses" @ref="_courseGrid" AllowTextWrap="false" AllowGrouping="false"
-                AllowSorting="true" AllowSelection="true" AllowPaging="true" AllowFiltering="true" Height="auto">
-                <GridSelectionSettings Mode="SelectionMode.Row" CheckboxOnly="true" PersistSelection="true"
-                    Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
-                <GridEvents DataBound="SetCourseStatus" RowSelected="ProcessSelectedCourses"
-                    RowDeselected="ProcessSelectedCourses" TValue="Course">
+                    AllowSorting="true" AllowSelection="true" AllowPaging="true" AllowFiltering="true" Height="auto">
+                <GridSelectionSettings Mode="SelectionMode.Row" CheckboxOnly="true" PersistSelection="false"
+                                       Type="SelectionType.Multiple"></GridSelectionSettings>
+                <GridEvents DataBound="SelectSyncEnabledCourseRows" RowSelected="ProcessSelectedCourses"
+                            RowDeselected="ProcessSelectedCourses"  TValue="Course">
                 </GridEvents>
                 <GridColumns>
                     <GridColumn Field="@nameof(Course.Name)" HeaderText="Name" TextAlign="TextAlign.Left" Width="120">
                     </GridColumn>
                     <GridColumn Field="@nameof(Course.StartAt)" HeaderText="Start Date" Format="d" Type="ColumnType.Date"
-                        TextAlign="TextAlign.Center" Width="130"></GridColumn>
+                                TextAlign="TextAlign.Center" Width="130"></GridColumn>
                     <GridColumn HeaderText="Sync Enabled" Type="ColumnType.CheckBox" Width="50">
                         <HeaderTemplate>
                         </HeaderTemplate>
@@ -29,9 +30,23 @@
         </div>
     </div>
 </div>
+
+
+<style type="text/css" class="cssStyles">
+    .e-grid .e-altrow {
+        /*background-color: #fafafa;*/
+    }
+
+    .e-grid .e-row .e-active {
+        /*background-color: #bbff94;*/
+
+    }
+</style>
+
 @code {
     private List<Course>? Courses { get; set; }
     private SfGrid<Course> _courseGrid = null!;
+    
 
 
     protected override async Task OnInitializedAsync()
@@ -40,12 +55,12 @@
     }
 
 
+
     /// <summary>
     /// Select the rows of sync enabled courses.
     /// </summary>
-    /// <param name="args"></param>
     /// <returns>Task</returns>
-    private async Task SetCourseStatus(object args)
+    private async Task SelectSyncEnabledCourseRows(object args)
     {
         if (Courses != null)
         {
