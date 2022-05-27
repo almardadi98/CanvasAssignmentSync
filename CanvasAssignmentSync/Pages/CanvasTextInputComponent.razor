@@ -24,7 +24,8 @@
     private void UriValidator(InputEventArgs args)
     {
         var uriText = args.Value;
-        var isValid = Uri.IsWellFormedUriString(uriText, UriKind.Absolute);
+        // TODO https is not enforced. Only visual for now 
+        var isValid = Uri.IsWellFormedUriString(uriText, UriKind.Absolute) && uriText.StartsWith("https");
         var cssClass = isValid ? "e-success" : "e-error";
         _apiUriTextBox.CssClass = cssClass;
     }

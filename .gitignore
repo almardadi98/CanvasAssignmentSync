@@ -363,3 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 /CanvasAssignmentSync/Conf/canvas_settings.json
 /CanvasAssignmentSync/Conf/mstodo_settings.json
+CanvasAssignmentSync/Courses.db-wal
+CanvasAssignmentSync/Courses.db-shm
+CanvasAssignmentSync/Courses.db-wal
+CanvasAssignmentSync/Courses.db-shm
