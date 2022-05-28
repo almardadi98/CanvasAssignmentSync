@@ -1,4 +1,6 @@
+using CanvasAssignmentSync.Services;
 using CanvasAssignmentSync.Data;
+using CanvasAssignmentSync.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -24,7 +26,7 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
     options.UseSqlite("Data source = Courses.db");
     options.EnableSensitiveDataLogging();
 });
-builder.Services.AddScoped<CanvasService>();
+builder.Services.AddScoped<CanvasRepository>();
 builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
 
