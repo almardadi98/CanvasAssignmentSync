@@ -1,28 +1,111 @@
 ﻿using CanvasAssignmentSync.Models;
+using CanvasAssignmentSync.Repositories;
+using CanvasAssignmentSync.Services;
+using Microsoft.Graph;
 using Microsoft.Net.Http.Headers;
 
-namespace CanvasAssignmentSync.Data
+namespace CanvasAssignmentSync.Services
 {
-    public class MsToDoService
+    public class MsToDoService : IMsToDoService
     {
-        private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
+        private readonly MsToDoRepository _repository;
 
-
-        public MsToDoService(HttpClient httpClient, IConfiguration configuration)
+        public MsToDoService(IConfiguration configuration, MsToDoRepository repository)
         {
-            _httpClient = httpClient;
             _configuration = configuration;
-
-            _httpClient.BaseAddress = new Uri(_configuration["MSToDo:APIURI"]);
-
-            //_httpClient.DefaultRequestHeaders.Add
-            // TODO skoða Graph pakka vs Normal httpclient
+            _repository = repository;
         }
 
-        public async Task<MsToDoTask> GetTask()
+
+        public async Task<IEnumerable<MsToDoTask>?> GetTasks()
         {
-            return new MsToDoTask(); //TODO finish
+            return await _repository.GetTasks();
+        }
+
+        public async Task<MsToDoTask?> GetTask(int id)
+        {
+            return await _repository.GetTask(id);
+        }
+
+        public async Task<MsToDoTask?> GetTask(MsToDoTask task)
+        {
+            return await _repository.GetTask(task);
+        }
+
+        public async Task<MsToDoTask> CreateTask(MsToDoTask task)
+        {
+            return await _repository.CreateTask(task);
+        }
+
+        public async Task<MsToDoTask> UpdateTask(MsToDoTask task)
+        {
+            return await _repository.UpdateTask(task);
+        }
+
+        public async Task<MsToDoTask> DeleteTask(int id) // TODO Move overloading from data layer to logic layer
+        {
+            return await _repository.DeleteTask(id);
+        }
+
+        public async Task<MsToDoTask> DeleteTask(MsToDoTask task)
+        {
+            return await _repository.DeleteTask(task);
+        }
+
+        public async Task<IEnumerable<MsToDoTaskList>?> GetTaskLists()
+        {
+            return await _repository.GetTaskLists();
+        }
+
+        public async Task<MsToDoTaskList?> GetTaskList(int id)
+        {
+            return await _repository.GetTaskList(id);
+        }
+
+        public async Task<MsToDoTaskList?> GetTaskList(MsToDoTaskList id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<MsToDoTaskList?> CreateTaskList(MsToDoTaskList taskList)
+        {
+            return await _repository.CreateTaskList(taskList);
+        }
+
+        public async Task<MsToDoTaskList> UpdateTaskList(MsToDoTaskList taskList)
+        {
+            return await _repository.UpdateTaskList(taskList);
+        }
+
+        public async Task<MsToDoTaskList> DeleteTaskList(int id)
+        {
+            return await _repository.DeleteTaskList(id);
+        }
+
+        public async Task<MsToDoTaskList> DeleteTaskList(MsToDoTaskList taskList)
+        {
+            return await _repository.DeleteTaskList(taskList);
+        }
+
+        public async Task CheckIfTaskExists(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task ConvertCourseToTask(Course course)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task ConvertCoursesToTasks(IEnumerable<Course> courses)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task SyncTasks()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -17,6 +17,9 @@ namespace CanvasAssignmentSync.Repositories
         private readonly CancellationToken _cancellationToken;
         public List<Course> CoursesLocal { get; set; } = new List<Course>();
 
+        private Uri ApiUri { get; set; }
+        private string ApiToken { get; set; }
+
         public CanvasRepository(HttpClient httpClient, IConfiguration configuration, CourseDbContext dbContext, CancellationToken cancellationToken)
         {
             _httpClient = httpClient;
@@ -24,14 +27,37 @@ namespace CanvasAssignmentSync.Repositories
             _courseDbContext = dbContext;
             _cancellationToken = cancellationToken;
 
-            _httpClient.BaseAddress = new Uri(_configuration["Canvas:APIURI"]);
+            ApiUri = new Uri(_configuration["Canvas:APIURI"]);
+            ApiToken = _configuration["Canvas:APIKey"];
 
-            _httpClient.DefaultRequestHeaders.Add(
-                HeaderNames.Authorization, $"Bearer {_configuration["Canvas:APIKey"]}");
-
-
+            InitHttpClient();
             GetCoursesFromDb();
         }
+
+        public void SetApiToken(string token)
+        {
+            ApiToken = token;
+        }
+
+        public void SetApiUri(Uri uri)
+        {
+            ApiUri = uri;
+        }
+
+        /// <summary>
+        /// Configure the API endpoint and authorization header.
+        /// </summary>
+        public void InitHttpClient()
+        {
+            _httpClient.BaseAddress = ApiUri;
+
+            _httpClient.DefaultRequestHeaders.Add(
+                HeaderNames.Authorization, $"Bearer {ApiToken}");
+
+        }
+
+
+
 
         private void GetCoursesFromDb()
         {
@@ -46,6 +72,7 @@ namespace CanvasAssignmentSync.Repositories
         /// <returns>Nothing. Modifies the list directly</returns>
         private void InjectCourseAttributes(List<Course> coursesFromCanvas)
         {
+            GetCoursesFromDb(); // Update the CoursesLocal property in case any changes have been made to the db.
             // Iterate over all sync enabled courses from Db
             foreach (var courseFromDb in CoursesLocal.Where(course => course.ShouldSync))
             {
@@ -53,6 +80,7 @@ namespace CanvasAssignmentSync.Repositories
                 if (courseFromCanvas != null) courseFromCanvas.ShouldSync = true;
             }
         }
+
 
 
         /// <summary>
@@ -90,12 +118,6 @@ namespace CanvasAssignmentSync.Repositories
             return await _httpClient.GetFromJsonAsync<Course?>($"courses/{id}", cancellationToken: _cancellationToken);
         }
 
-        public async Task<Course?> GetCourse(Course course)
-        {
-            var id = course.Id;
-            return await GetCourse(id);
-        }
-
         /// <summary>
         /// Since the courses are tracked by EF core, we only need to update the course in the CoursesLocal to update it in the database
         /// </summary>
@@ -108,18 +130,19 @@ namespace CanvasAssignmentSync.Repositories
             return courseToUpdate;
         }
 
-        public void DeleteCourse(int id)
-        {
-            var courseToRemove = CoursesLocal.FirstOrDefault(course => course.Id == id);
-            if (courseToRemove == null) return;
-            _courseDbContext.Courses.Remove(courseToRemove);
-            GetCoursesFromDb();
-        }
 
-        public void DeleteCourse(Course course)
+        /// <summary>
+        /// Stop tracking the course and then save the changes to remove it from the database.
+        /// </summary>
+        /// <param name="course"></param>
+        /// <returns>
+        /// A task that represents the asynchronous save operation. The task result contains the
+        /// number of state entries written to the database.
+        /// </returns>
+        public async Task<int> DeleteCourse(Course course)
         {
             _courseDbContext.Courses.Remove(course);
-            GetCoursesFromDb();
+            return await _courseDbContext.SaveChangesAsync(_cancellationToken);
         }
 
         /// <summary>
@@ -145,17 +168,5 @@ namespace CanvasAssignmentSync.Repositories
             return await _httpClient.GetFromJsonAsync<Assignment?>($"courses/{courseId}/assignments/{id}", cancellationToken: _cancellationToken);
         }
 
-        public async Task<Assignment?> GetAssignment(Course course, int id)
-        {
-            var courseId = course.Id;
-            return await GetAssignment(courseId, id);
-        }
-
-        public async Task<Assignment?> GetAssignment(Assignment assignment)
-        {
-            var courseId = assignment.CourseId;
-            var id = assignment.Id;
-            return await GetAssignment(courseId, id);
-        }
     }
 }

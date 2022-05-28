@@ -16,6 +16,7 @@ namespace CanvasAssignmentSync.Services
         // Task list methods
         public Task<IEnumerable<MsToDoTaskList>?> GetTaskLists();
         public Task<MsToDoTaskList?> GetTaskList(int id);
+        public Task<MsToDoTaskList?> GetTaskList(MsToDoTaskList id);
         public Task<MsToDoTaskList?> CreateTaskList(MsToDoTaskList taskList);
         public Task<MsToDoTaskList> UpdateTaskList(MsToDoTaskList taskList);
         public Task<MsToDoTaskList> DeleteTaskList(int id);
@@ -24,6 +25,7 @@ namespace CanvasAssignmentSync.Services
         // Business logic
         public Task CheckIfTaskExists(int id);
         public Task ConvertCourseToTask(Course course); // Coupling
+        public Task ConvertCoursesToTasks(IEnumerable<Course> courses); // Coupling
         public Task SyncTasks();
     }
 }
