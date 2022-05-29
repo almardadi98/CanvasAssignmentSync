@@ -14,18 +14,16 @@ namespace CanvasAssignmentSync.Repositories
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly CourseDbContext _courseDbContext;
-        private readonly CancellationToken _cancellationToken;
         public List<Course> CoursesLocal { get; set; } = new List<Course>();
 
         private Uri ApiUri { get; set; }
         private string ApiToken { get; set; }
 
-        public CanvasRepository(HttpClient httpClient, IConfiguration configuration, CourseDbContext dbContext, CancellationToken cancellationToken)
+        public CanvasRepository(HttpClient httpClient, IConfiguration configuration, CourseDbContext dbContext)
         {
             _httpClient = httpClient;
             _configuration = configuration;
             _courseDbContext = dbContext;
-            _cancellationToken = cancellationToken;
 
             ApiUri = new Uri(_configuration["Canvas:APIURI"]);
             ApiToken = _configuration["Canvas:APIKey"];
@@ -88,11 +86,11 @@ namespace CanvasAssignmentSync.Repositories
         /// Injects the stored attributes to the models e.g. ShouldSync
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<Course>?> GetCourses()
+        public async Task<List<Course>?> GetCourses(CancellationToken cancellationToken)
         {
-            var coursesFromCanvas = await _httpClient.GetFromJsonAsync<List<Course>?>("courses", cancellationToken: _cancellationToken);
+            var coursesFromCanvas = await _httpClient.GetFromJsonAsync<List<Course>?>("courses", cancellationToken: cancellationToken);
             if (coursesFromCanvas == null) return null;
-            await CreateCoursesInLocalDb(coursesFromCanvas); // If there are any new Courses, they get created here
+            await CreateCoursesInLocalDb(coursesFromCanvas, cancellationToken); // If there are any new Courses, they get created here
             InjectCourseAttributes(coursesFromCanvas);
             return coursesFromCanvas;
         }
@@ -102,20 +100,22 @@ namespace CanvasAssignmentSync.Repositories
         /// Begins tracking all the courses in the list.
         /// </summary>
         /// <param name="coursesFromCanvas"></param>
-        private async Task CreateCoursesInLocalDb(IEnumerable<Course> coursesFromCanvas)
+        private async Task CreateCoursesInLocalDb(IEnumerable<Course> coursesFromCanvas, CancellationToken cancellationToken)
         {
             foreach (var course in coursesFromCanvas)
             {
-                _courseDbContext.Courses.Add(course);
+                // If the course is already in the db, skip the iteration
+                if (CoursesLocal.Contains(course)) continue;
+                //_courseDbContext.Courses.Add(course);
             }
-            await _courseDbContext.SaveChangesAsync(_cancellationToken);
+            await _courseDbContext.SaveChangesAsync(cancellationToken);
 
             GetCoursesFromDb();
         }
 
-        public async Task<Course?> GetCourse(int id)
+        public async Task<Course?> GetCourse(int id, CancellationToken cancellationToken)
         {
-            return await _httpClient.GetFromJsonAsync<Course?>($"courses/{id}", cancellationToken: _cancellationToken);
+            return await _httpClient.GetFromJsonAsync<Course?>($"courses/{id}", cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -123,10 +123,11 @@ namespace CanvasAssignmentSync.Repositories
         /// </summary>
         /// <param name="course"></param>
         /// <returns></returns>
-        public Course UpdateCourse(Course course)
+        public Course UpdateCourse(Course course) // TODO course not updating in db
         {
             var courseToUpdate = CoursesLocal.FirstOrDefault(course);
             courseToUpdate.ShouldSync = course.ShouldSync;
+            _courseDbContext.SaveChanges();
             return courseToUpdate;
         }
 
@@ -139,33 +140,33 @@ namespace CanvasAssignmentSync.Repositories
         /// A task that represents the asynchronous save operation. The task result contains the
         /// number of state entries written to the database.
         /// </returns>
-        public async Task<int> DeleteCourse(Course course)
+        public async Task<int> DeleteCourse(Course course, CancellationToken cancellationToken)
         {
             _courseDbContext.Courses.Remove(course);
-            return await _courseDbContext.SaveChangesAsync(_cancellationToken);
+            return await _courseDbContext.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>
         /// Get assignments for all courses in local database.
         /// </summary>
         /// <returns>An IEnumerable of Assignment models</returns>
-        public async Task<IEnumerable<Assignment>?> GetAssignments()
+        public async Task<List<Assignment>?> GetAssignments(CancellationToken cancellationToken)
         {
 
             var assignments = new List<Assignment>();
 
             foreach (var course in CoursesLocal)
             {
-                var courseAssignments = await _httpClient.GetFromJsonAsync<List<Assignment>?>($"courses/{course.Id}/assignments", cancellationToken: _cancellationToken);
+                var courseAssignments = await _httpClient.GetFromJsonAsync<List<Assignment>?>($"courses/{course.Id}/assignments", cancellationToken: cancellationToken);
                 if (courseAssignments is not null) assignments.AddRange(assignments);
 
             }
             return assignments;
         }
 
-        public async Task<Assignment?> GetAssignment(int courseId, int id)
+        public async Task<Assignment?> GetAssignment(int courseId, int id, CancellationToken cancellationToken)
         {
-            return await _httpClient.GetFromJsonAsync<Assignment?>($"courses/{courseId}/assignments/{id}", cancellationToken: _cancellationToken);
+            return await _httpClient.GetFromJsonAsync<Assignment?>($"courses/{courseId}/assignments/{id}", cancellationToken: cancellationToken);
         }
 
     }

@@ -4,17 +4,17 @@ namespace CanvasAssignmentSync.Repositories
 {
     public class MsToDoRepository : IMsToDoRepository
     {
-        public async Task<IEnumerable<MsToDoTask>> GetTasks()
+        public async Task<List<MsToDoTask>?> GetTasks()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<MsToDoTask> GetTask(int id)
+        public async Task<MsToDoTask?> GetTask(int id)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<MsToDoTask> GetTask(MsToDoTask task)
+        public async Task<MsToDoTask?> GetTask(MsToDoTask task)
         {
             throw new NotImplementedException();
         }
@@ -34,22 +34,17 @@ namespace CanvasAssignmentSync.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<MsToDoTask> DeleteTask(MsToDoTask task)
+        public async Task<List<MsToDoTaskList>?> GetTaskLists()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<MsToDoTaskList>> GetTaskLists()
+        public async Task<MsToDoTaskList?> GetTaskList(int id)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<MsToDoTaskList> GetTaskList(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<MsToDoTaskList> CreateTaskList(MsToDoTaskList taskList)
+        public async Task<MsToDoTaskList?> CreateTaskList(MsToDoTaskList taskList)
         {
             throw new NotImplementedException();
         }
@@ -60,11 +55,6 @@ namespace CanvasAssignmentSync.Repositories
         }
 
         public async Task<MsToDoTaskList> DeleteTaskList(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<MsToDoTaskList> DeleteTaskList(MsToDoTaskList taskList)
         {
             throw new NotImplementedException();
         }

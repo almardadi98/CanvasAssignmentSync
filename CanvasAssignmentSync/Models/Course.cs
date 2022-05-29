@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace CanvasAssignmentSync.Models
 {
-    public class Course : IComparable<Course>
+    public class Course
     {
         [Required]
         public string Name { get; init; } = null!;
@@ -16,11 +16,6 @@ namespace CanvasAssignmentSync.Models
         [JsonPropertyName("start_at")]
         public DateTime StartAt { get; init; }
 
-
-        public int CompareTo(Course other)
-        {
-            return other.StartAt.CompareTo(StartAt);
-        }
 
 
         public override string ToString()

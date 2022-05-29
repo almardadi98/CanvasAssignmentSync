@@ -26,7 +26,10 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
     options.UseSqlite("Data source = Courses.db");
     options.EnableSensitiveDataLogging();
 });
-builder.Services.AddScoped<CanvasRepository>();
+
+builder.Services.AddScoped<ICanvasRepository, CanvasRepository>();
+builder.Services.AddScoped<ICanvasService, CanvasService>();
+
 builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
 
@@ -39,10 +42,9 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
-//builder.Services.AddHttpClient<CanvasService>();
 
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjQxMjM5QDMyMzAyZTMxMmUzMEwwL0wrV3lCM1BpcmVnN05aWGJuWjRycmZvM3ZYbXF0WEk5S25INzU0SE09");
-builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+builder.Services.AddSyncfusionBlazor(options => {});
 
 var app = builder.Build();
 

@@ -9,9 +9,9 @@ namespace CanvasAssignmentSync.Services
     public class CanvasService : ICanvasService
     {
         private readonly IConfiguration _configuration;
-        private readonly CanvasRepository _repository;
+        private readonly ICanvasRepository _repository;
 
-        public CanvasService(IConfiguration configuration, CanvasRepository repository)
+        public CanvasService(IConfiguration configuration, ICanvasRepository repository)
         {
             _configuration = configuration;
             _repository = repository;
@@ -30,28 +30,28 @@ namespace CanvasAssignmentSync.Services
 
         public void SetApiToken(string token)
         {
-            throw new NotImplementedException();
+            _repository.SetApiToken(token);
         }
 
         public void SetApiUri(Uri uri)
         {
-            throw new NotImplementedException();
+            _repository.SetApiUri(uri);
         }
 
-        public async Task<IEnumerable<Course>?> GetCourses()
+        public async Task<List<Course>?> GetCourses(CancellationToken cancellationToken)
         {
-            return await _repository.GetCourses();
+            return await _repository.GetCourses(cancellationToken);
         }
 
-        public async Task<Course?> GetCourse(int id)
+        public async Task<Course?> GetCourse(int id, CancellationToken cancellationToken)
         {
-            return await _repository.GetCourse(id);
+            return await _repository.GetCourse(id, cancellationToken);
         }
 
-        public async Task<Course?> GetCourse(Course course)
+        public async Task<Course?> GetCourse(Course course, CancellationToken cancellationToken)
         {
             var id = course.Id;
-            return await GetCourse(id);
+            return await GetCourse(id, cancellationToken);
         }
 
         public Course UpdateCourse(Course course)
@@ -59,39 +59,48 @@ namespace CanvasAssignmentSync.Services
             return _repository.UpdateCourse(course);
         }
 
-        public async Task<int?> DeleteCourse(int id)
+        public List<Course> UpdateCourses(List<Course> courses)
         {
-            var courseToDelete = await _repository.GetCourse(id);
+            foreach (var course in courses)
+            {
+                UpdateCourse(course);
+            }
+            return courses;
+        }
+
+        public async Task<int?> DeleteCourse(int id, CancellationToken cancellationToken)
+        {
+            var courseToDelete = await _repository.GetCourse(id, cancellationToken);
             if (courseToDelete is null) return null;
-            return await DeleteCourse(courseToDelete);
+            return await DeleteCourse(courseToDelete, cancellationToken);
         }
 
-        public async Task<int?> DeleteCourse(Course course)
+        public async Task<int?> DeleteCourse(Course course, CancellationToken cancellationToken)
         {
-            return await _repository.DeleteCourse(course);
+            return await _repository.DeleteCourse(course, cancellationToken);
         }
 
-        public async Task<IEnumerable<Assignment>?> GetAssignments()
+        public async Task<List<Assignment>?> GetAssignments(CancellationToken cancellationToken)
         {
-            return await _repository.GetAssignments();
+            return await _repository.GetAssignments(cancellationToken);
         }
 
-        public async Task<Assignment?> GetAssignment(int courseId, int id)
+        public async Task<Assignment?> GetAssignment(int courseId, int id, CancellationToken cancellationToken)
         {
-            return await _repository.GetAssignment(courseId, id);
+            return await _repository.GetAssignment(courseId, id, cancellationToken);
         }
 
-        public async Task<Assignment?> GetAssignment(Course course, int id)
+        public async Task<Assignment?> GetAssignment(Course course, int id, CancellationToken cancellationToken)
         {
             var courseId = course.Id;
-            return await GetAssignment(courseId, id);
+            return await GetAssignment(courseId, id, cancellationToken);
         }
 
-        public async Task<Assignment?> GetAssignment(Assignment assignment)
+        public async Task<Assignment?> GetAssignment(Assignment assignment, CancellationToken cancellationToken)
         {
             var courseId = assignment.CourseId;
             var id = assignment.Id;
-            return await GetAssignment(courseId, id);
+            return await GetAssignment(courseId, id, cancellationToken);
         }
 
 

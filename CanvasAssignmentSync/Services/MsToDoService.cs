@@ -1,24 +1,21 @@
 ﻿using CanvasAssignmentSync.Models;
 using CanvasAssignmentSync.Repositories;
-using CanvasAssignmentSync.Services;
-using Microsoft.Graph;
-using Microsoft.Net.Http.Headers;
 
 namespace CanvasAssignmentSync.Services
 {
     public class MsToDoService : IMsToDoService
     {
         private readonly IConfiguration _configuration;
-        private readonly MsToDoRepository _repository;
+        private readonly IMsToDoRepository _repository;
 
-        public MsToDoService(IConfiguration configuration, MsToDoRepository repository)
+        public MsToDoService(IConfiguration configuration, IMsToDoRepository repository)
         {
             _configuration = configuration;
             _repository = repository;
         }
 
 
-        public async Task<IEnumerable<MsToDoTask>?> GetTasks()
+        public async Task<List<MsToDoTask>?> GetTasks()
         {
             return await _repository.GetTasks();
         }
@@ -43,17 +40,17 @@ namespace CanvasAssignmentSync.Services
             return await _repository.UpdateTask(task);
         }
 
-        public async Task<MsToDoTask> DeleteTask(int id) // TODO Move overloading from data layer to logic layer
+        public async Task<MsToDoTask> DeleteTask(int id)
         {
             return await _repository.DeleteTask(id);
         }
 
         public async Task<MsToDoTask> DeleteTask(MsToDoTask task)
         {
-            return await _repository.DeleteTask(task);
+            throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<MsToDoTaskList>?> GetTaskLists()
+        public async Task<List<MsToDoTaskList>?> GetTaskLists()
         {
             return await _repository.GetTaskLists();
         }
@@ -85,7 +82,7 @@ namespace CanvasAssignmentSync.Services
 
         public async Task<MsToDoTaskList> DeleteTaskList(MsToDoTaskList taskList)
         {
-            return await _repository.DeleteTaskList(taskList);
+            throw new NotImplementedException();
         }
 
         public async Task CheckIfTaskExists(int id)
@@ -98,7 +95,7 @@ namespace CanvasAssignmentSync.Services
             throw new NotImplementedException();
         }
 
-        public async Task ConvertCoursesToTasks(IEnumerable<Course> courses)
+        public async Task ConvertCoursesToTasks(List<Course> courses)
         {
             throw new NotImplementedException();
         }

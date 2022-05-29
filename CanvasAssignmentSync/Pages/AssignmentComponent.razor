@@ -53,12 +53,16 @@
 
 @code {
     private List<Assignment> assignmentList;
-
+    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+    public void Dispose()
+    {
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource?.Dispose();
+    }
     protected override async Task OnInitializedAsync()
     {
-        assignmentList = await CanvasService.GetAssignmentListAsync();
-        assignmentList.Sort();
+        assignmentList = await CanvasService.GetAssignments(cancellationTokenSource.Token);
     }
-    
+
 
 }

@@ -2,20 +2,20 @@
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
-<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@_model" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <h3>Microsoft To-Do Settings</h3>
     <div class="row">
         <label>
             Client Id
-            <InputText class="form-control" id="clientid" @bind-Value="model.ClientId"></InputText>
+            <InputText class="form-control" id="clientid" @bind-Value="_model.ClientId"></InputText>
         </label>
     </div>
 
     <div class=row>
     <label>
         Client Secret
-        <InputText class="form-control"  id="clientsecret" @bind-Value="model.ClientSecret"></InputText>
+        <InputText class="form-control"  id="clientsecret" @bind-Value="_model.ClientSecret"></InputText>
     </label>
     </div>
     <button type="submit" class="btn btn-primary">Apply</button>
@@ -24,12 +24,9 @@
 </EditForm>
 
 @code {
-    MsToDoSettings model = new MsToDoSettings();
+    MsToDoSettings _model = new MsToDoSettings();
 
     private void HandleValidSubmit()
     {
-        var path = Configuration["MSTodoSettingsPath"];
-        var mstodoSettingsHandler = new SettingsHandler<MsToDoSettings>(model, path);
-        mstodoSettingsHandler.WriteSettingsToFile();
     }
 }

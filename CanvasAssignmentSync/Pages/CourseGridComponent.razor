@@ -2,7 +2,7 @@
 @using Syncfusion.Blazor.Grids
 @using CanvasAssignmentSync.Data
 @using CanvasAssignmentSync.Models
-@inject CanvasService CanvasService
+@inject ICanvasService CanvasService
 
 
 <div class="col-lg-12 control-section">
@@ -46,12 +46,17 @@
 @code {
     private List<Course>? Courses { get; set; }
     private SfGrid<Course> _courseGrid = null!;
-    
+    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+    public void Dispose()
+    {
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource?.Dispose();
+    }
 
 
     protected override async Task OnInitializedAsync()
     {
-        Courses = await CanvasService.GetCoursesAsync();
+        Courses = await CanvasService.GetCourses(cancellationTokenSource.Token);
     }
 
 
@@ -102,20 +107,20 @@
 
         SetShouldSyncBool(Courses!, selectedCourses);
         // We only need to update the selected courses. The others are unchanged.
-        await CanvasService.UpdateCoursesDbAsync(selectedCourses);
+        CanvasService.UpdateCourses(selectedCourses);
     }
 
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    public async Task ProcessSelectedCourses(RowDeselectEventArgs<Course> args)
+    public void ProcessSelectedCourses(RowDeselectEventArgs<Course> args)
     {
         var deselectedCourse = args.Data;
         // The course has been deselected.
         deselectedCourse.ShouldSync = false;
         // We only need to update the selected (deselected) courses. The others are unchanged.
-        await CanvasService.UpdateCourseDbAsync(deselectedCourse);
+        CanvasService.UpdateCourse(deselectedCourse);
     }
 
 
