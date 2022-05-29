@@ -6,7 +6,9 @@ namespace CanvasAssignmentSync.Services
     {
         // Connection methods
         public Task<string> RequestApiToken(); // Method to automagically retrieve the token.
+        public string GetApiToken();
         public void SetApiToken(string token);
+        public Uri GetApiUri();
         public void SetApiUri(Uri uri); // Used by the logic layer to change the api endpoint during runtime.
 
         // Course methods

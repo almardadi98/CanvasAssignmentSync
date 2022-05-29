@@ -5,7 +5,9 @@ namespace CanvasAssignmentSync.Repositories
     public interface ICanvasRepository
     {
         // Connection methods
-        public void SetApiToken(string token); 
+        public string GetApiToken();
+        public void SetApiToken(string token);
+        public Uri GetApiUri();
         public void SetApiUri(Uri uri); // Used by the logic layer to change the api endpoint during runtime.
         public void InitHttpClient();
 

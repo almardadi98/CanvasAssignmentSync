@@ -1,0 +1,8 @@
+﻿body {
+}
+
+
+::deep hr {
+     color: gray
+ }
+

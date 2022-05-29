@@ -1,11 +1,16 @@
 ﻿@using Syncfusion.Blazor.Inputs
-<h2 class="text-light">Canvas</h2>
+@inject ICanvasService CanvasService
 
-<label class="text-light">Api Uri</label>
-<SfTextBox @ref="_apiUriTextBox" @bind-Value="@_apiUri" Input="UriValidator" ShowClearButton="true" Placeholder="https://canvas.instructure.com/api/v1/"></SfTextBox>
+<div class="row my-2">
+<label class="text-light">API Uri</label>
+<SfTextBox @ref="_apiUriTextBox" @bind-Value="@_apiUri" Input="UriValidator" ID="apiUriTextBox" ShowClearButton="true" Placeholder="https://canvas.instructure.com/api/v1/"></SfTextBox>
+</div>
 
-<label class="text-light">Api Key</label>
-<SfTextBox @ref="_apiKeyTextBox" ShowClearButton="true" Placeholder="YourSecretKey"></SfTextBox>
+<div class="row my-2">
+
+<label class="text-light">API Key</label>
+<SfTextBox @ref="_apiKeyTextBox" @bind-value="@_apiKey" Type="InputType.Password" ID="apiKeyTextBox" ShowClearButton="true" Placeholder="YourSecretKey"></SfTextBox>
+</div>
 
 
 
@@ -17,7 +22,11 @@
     private SfTextBox _apiKeyTextBox;
     private string _apiKey;
 
-
+    protected override void OnInitialized()
+    {
+        _apiUri = CanvasService.GetApiUri().ToString();
+        _apiKey = CanvasService.GetApiToken();
+    }
 
 
 

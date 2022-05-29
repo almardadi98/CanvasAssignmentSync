@@ -28,9 +28,19 @@ namespace CanvasAssignmentSync.Services
             throw new NotImplementedException();
         }
 
+        public string GetApiToken()
+        {
+            return _repository.GetApiToken();
+        }
+
         public void SetApiToken(string token)
         {
             _repository.SetApiToken(token);
+        }
+
+        public Uri GetApiUri()
+        {
+            return _repository.GetApiUri();
         }
 
         public void SetApiUri(Uri uri)

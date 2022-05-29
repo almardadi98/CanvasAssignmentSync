@@ -3,32 +3,20 @@
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
-@*
-<EditForm Model="@_settings.Model" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <h3>Canvas Settings</h3>
-    <div class="row">
-        <label>
-            API URI
-            <InputText class="form-control" id="apiuri" @bind-Value="_settings.Model.APIURI"></InputText>
-        </label>
-    </div>
 
-    <div class=row>
-    <label>
-        API Key
-        <InputText class="form-control" id="apikey" @bind-Value="_settings.Model.APIKey"></InputText>
-    </label>
-    </div>
-    
-    <button type="submit" class="btn btn-primary">Apply</button>
+<div class="row">
+    <div class="col"><hr></div>
+    <div class="col-auto"><h1 class="text-light">Canvas</h1></div>
+    <div class="col"><hr></div>
+</div>
+<div class="row mb-4">
+    <CanvasTextInputComponent></CanvasTextInputComponent>
+</div>
 
-    <ValidationSummary/>
-
-</EditForm>*@
-<CanvasTextInputComponent></CanvasTextInputComponent>
-
+<div class="row">
 <CourseGridComponent></CourseGridComponent>
+</div>
+
 @code {
     // TODO bæta við takka til að fá token
 

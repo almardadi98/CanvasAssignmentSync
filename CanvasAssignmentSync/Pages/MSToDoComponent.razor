@@ -1,30 +1,39 @@
 ﻿@using CanvasAssignmentSync.Models
 @using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
+@using Syncfusion.Blazor.Inputs
 
-<EditForm Model="@_model" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <h3>Microsoft To-Do Settings</h3>
-    <div class="row">
-        <label>
-            Client Id
-            <InputText class="form-control" id="clientid" @bind-Value="_model.ClientId"></InputText>
-        </label>
-    </div>
+<div class="row">
+    <div class="col"><hr></div>
+    <div class="col-auto"><h1 class="text-light">Microsoft To-Do</h1></div>
+    <div class="col"><hr></div>
+</div>
 
-    <div class=row>
-    <label>
-        Client Secret
-        <InputText class="form-control"  id="clientsecret" @bind-Value="_model.ClientSecret"></InputText>
-    </label>
-    </div>
-    <button type="submit" class="btn btn-primary">Apply</button>
-    <ValidationSummary/>
+<div class="row my-2">
+    <label class="text-light">Client Id</label>
+    <SfTextBox @ref="_clientIdTextBox" @bind-Value="@_clientId" Input="ClientIdValidator" ShowClearButton="true" Placeholder="xxxx-xxxx-xxxx"></SfTextBox>
+</div>
 
-</EditForm>
+<div class="row my-2">
+
+    <label class="text-light">Client Secret</label>
+    <SfTextBox @ref="_clientSecretTextBox" @bind-value="@_clientSecret" ShowClearButton="true" Placeholder="xxxx-xxxx-xxxx"></SfTextBox>
+</div>
+
+
 
 @code {
-    MsToDoSettings _model = new MsToDoSettings();
+    private SfTextBox _clientIdTextBox;
+    private string _clientId;
+
+
+    private SfTextBox _clientSecretTextBox;
+    private string _clientSecret;
+
+    private void ClientIdValidator()
+    {
+
+    }
+
 
     private void HandleValidSubmit()
     {

@@ -16,8 +16,8 @@ namespace CanvasAssignmentSync.Repositories
         private readonly CourseDbContext _courseDbContext;
         public List<Course> CoursesLocal { get; set; } = new List<Course>();
 
-        private Uri ApiUri { get; set; }
         private string ApiToken { get; set; }
+        private Uri ApiUri { get; set; }
 
         public CanvasRepository(HttpClient httpClient, IConfiguration configuration, CourseDbContext dbContext)
         {
@@ -32,9 +32,19 @@ namespace CanvasAssignmentSync.Repositories
             GetCoursesFromDb();
         }
 
+        public string GetApiToken()
+        {
+            return ApiToken;
+        }
+
         public void SetApiToken(string token)
         {
             ApiToken = token;
+        }
+
+        public Uri GetApiUri()
+        {
+            return ApiUri;
         }
 
         public void SetApiUri(Uri uri)
