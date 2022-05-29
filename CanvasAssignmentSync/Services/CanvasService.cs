@@ -64,7 +64,7 @@ namespace CanvasAssignmentSync.Services
             return await GetCourse(id, cancellationToken);
         }
 
-        public Course UpdateCourse(Course course)
+        public Course? UpdateCourse(Course course)
         {
             return _repository.UpdateCourse(course);
         }

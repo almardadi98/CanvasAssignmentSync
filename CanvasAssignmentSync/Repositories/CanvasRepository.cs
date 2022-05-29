@@ -25,8 +25,13 @@ namespace CanvasAssignmentSync.Repositories
             _configuration = configuration;
             _courseDbContext = dbContext;
 
-            ApiUri = new Uri(_configuration["Canvas:APIURI"]);
-            ApiToken = _configuration["Canvas:APIKey"];
+
+            var canvasOptions = new CanvasOptions();
+            var configSection = _configuration.GetSection(CanvasOptions.Canvas);
+            configSection.Bind(canvasOptions);
+
+            ApiUri = canvasOptions.ApiUri;
+            ApiToken = canvasOptions.ApiKey;
 
             InitHttpClient();
             GetCoursesFromDb();
@@ -133,12 +138,15 @@ namespace CanvasAssignmentSync.Repositories
         /// </summary>
         /// <param name="course"></param>
         /// <returns></returns>
-        public Course UpdateCourse(Course course) // TODO course not updating in db
+        public Course? UpdateCourse(Course course)
         {
-            var courseToUpdate = CoursesLocal.FirstOrDefault(course);
+            var courseToUpdate = CoursesLocal.FirstOrDefault(c => c.Id == course.Id);
+            if (courseToUpdate == null) return null;
+
             courseToUpdate.ShouldSync = course.ShouldSync;
             _courseDbContext.SaveChanges();
             return courseToUpdate;
+
         }
 
 
