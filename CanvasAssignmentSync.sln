@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CanvasAssignmentSync", "CanvasAssignmentSync\CanvasAssignmentSync.csproj", "{6540A148-00ED-4F01-BC14-1BE6933155AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CanvasAssignmentSync.Tests", "CanvasAssignmentSync.Tests\CanvasAssignmentSync.Tests.csproj", "{574F35AE-1B82-4EA4-A1CF-8F179CAF5496}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CanvasAssignmentSync.Tests", "CanvasAssignmentSync.Tests\CanvasAssignmentSync.Tests.csproj", "{574F35AE-1B82-4EA4-A1CF-8F179CAF5496}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CanvasAssignmentSync.Tests.UI", "CanvasAssignmentSync.Tests.UI\CanvasAssignmentSync.Tests.UI.csproj", "{B21A6E32-E1A4-4FDB-80DC-A99F34377EB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{574F35AE-1B82-4EA4-A1CF-8F179CAF5496}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{574F35AE-1B82-4EA4-A1CF-8F179CAF5496}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{574F35AE-1B82-4EA4-A1CF-8F179CAF5496}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B21A6E32-E1A4-4FDB-80DC-A99F34377EB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B21A6E32-E1A4-4FDB-80DC-A99F34377EB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B21A6E32-E1A4-4FDB-80DC-A99F34377EB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B21A6E32-E1A4-4FDB-80DC-A99F34377EB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

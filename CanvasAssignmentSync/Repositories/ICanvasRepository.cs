@@ -14,7 +14,7 @@ namespace CanvasAssignmentSync.Repositories
         // Course methods
         public Task<List<Course>?> GetCourses(CancellationToken cancellationToken);
         public Task<Course?> GetCourse(int id, CancellationToken cancellationToken);
-        public Course UpdateCourse(Course course);
+        public Course? UpdateCourse(Course course);
         public Task<int> DeleteCourse(Course course, CancellationToken cancellationToken);
 
         // Assignment methods

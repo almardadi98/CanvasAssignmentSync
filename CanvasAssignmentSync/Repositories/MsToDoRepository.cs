@@ -1,7 +1,9 @@
 ﻿using AngleSharp;
+using AngleSharp.Diffing.Strategies.ElementStrategies;
 using Azure.Identity;
 using CanvasAssignmentSync.Models;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
@@ -15,51 +17,51 @@ namespace CanvasAssignmentSync.Repositories
         private readonly string _tenantId;
         // Value from app registration
         private readonly string _clientId;
+        private readonly string _clientSecret;
         // Permissions. Scope of access
         private readonly List<string> _scopes;
-        private readonly GraphServiceClient _graphServiceClient;
+        private readonly GraphServiceClient _client;
+
 
         public MsToDoRepository(IConfiguration configuration)
         {
             _configuration = configuration;
-
-            //var scopes = new[] { "User.Read" };
-            //var tenantId = "common";
-            //var clientId = "YOUR_CLIENT_ID";
-
             var msToDoOptions = new MsToDoOptions();
             var configSection = _configuration.GetSection(MsToDoOptions.MsToDo);
             configSection.Bind(msToDoOptions);
-
             _tenantId = msToDoOptions.TenantId;
             _clientId = msToDoOptions.ClientId;
-            _scopes = msToDoOptions.Scopes;
-            var deviceCodeCredential = GetDeviceCodeCredential();
+            _clientSecret = msToDoOptions.ClientSecret;
+            _scopes = msToDoOptions.Scopes ?? new List<string>() { "User.Read" };
+            // For authorization code flow, the user signs into the Microsoft
+            // identity platform, and the browser is redirected back to your app
+            // with an authorization code in the query parameters
+            var authorizationCode = GetAuthorizationCode();
 
-            _graphServiceClient = new GraphServiceClient(deviceCodeCredential, _scopes);
-
-        }
-
-        private DeviceCodeCredential GetDeviceCodeCredential()
-        {
             // using Azure.Identity;
             var options = new TokenCredentialOptions
             {
                 AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
             };
 
-            // Callback function that receives the user prompt
-            // Prompt contains the generated device code that use must
-            // enter during the auth process in the browser
-            Func<DeviceCodeInfo, CancellationToken, Task> callback = (code, cancellation) => {
-                Console.WriteLine(code.Message);
-                return Task.FromResult(0);
-            };
+            // https://docs.microsoft.com/dotnet/api/azure.identity.authorizationcodecredential
+            var authCodeCredential = new AuthorizationCodeCredential(
+                _tenantId, _clientId, _clientSecret, authorizationCode, options);
 
-            // https://docs.microsoft.com/dotnet/api/azure.identity.devicecodecredential
-            var deviceCodeCredential = new DeviceCodeCredential(
-                callback, _tenantId, _clientId, options);
-            return deviceCodeCredential;
+
+
+            _client = new GraphServiceClient(authCodeCredential, _scopes);
+
+
+        }
+
+        private string GetAuthorizationCode()
+        {
+
+            var authorizationCode = "AUTH_CODE_FROM_REDIRECT";
+
+
+            return authorizationCode;
         }
 
         public async Task<List<MsToDoTask>?> GetTasks()
@@ -94,7 +96,19 @@ namespace CanvasAssignmentSync.Repositories
 
         public async Task<List<MsToDoTaskList>?> GetTaskLists()
         {
-            throw new NotImplementedException();
+            var user = await _client.Me
+                .Request()
+                .Select(u => new {
+                    u.DisplayName,
+                    u.JobTitle
+                })
+                .GetAsync();
+            var collPage =  await _client.Me.Todo.Lists
+                .Request()
+                .Top(20)
+                .GetAsync();
+
+            return new List<MsToDoTaskList>();
         }
 
         public async Task<MsToDoTaskList?> GetTaskList(int id)

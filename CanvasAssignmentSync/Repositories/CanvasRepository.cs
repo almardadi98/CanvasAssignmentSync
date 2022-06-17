@@ -1,6 +1,7 @@
 ﻿using CanvasAssignmentSync.Data;
 using CanvasAssignmentSync.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
 namespace CanvasAssignmentSync.Repositories
@@ -25,9 +26,8 @@ namespace CanvasAssignmentSync.Repositories
             _configuration = configuration;
             _courseDbContext = dbContext;
 
-
             var canvasOptions = new CanvasOptions();
-            var configSection = _configuration.GetSection(CanvasOptions.Canvas);
+            var configSection =_configuration.GetSection(CanvasOptions.Canvas);
             configSection.Bind(canvasOptions);
 
             ApiUri = canvasOptions.ApiUri;

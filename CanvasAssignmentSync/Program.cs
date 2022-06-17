@@ -1,5 +1,6 @@
 using CanvasAssignmentSync.Services;
 using CanvasAssignmentSync.Data;
+using CanvasAssignmentSync.Models;
 using CanvasAssignmentSync.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -27,8 +28,16 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
     options.EnableSensitiveDataLogging();
 });
 
+//builder.Services.AddOptions<MsToDoOptions>()
+//    .Bind(builder.Configuration.GetSection(MsToDoOptions.MsToDo));
+
+//builder.Services.AddOptions<CanvasOptions>()
+//    .Bind(builder.Configuration.GetSection(CanvasOptions.Canvas));
+
 builder.Services.AddScoped<ICanvasRepository, CanvasRepository>();
 builder.Services.AddScoped<ICanvasService, CanvasService>();
+builder.Services.AddScoped<IMsToDoRepository, MsToDoRepository>();
+builder.Services.AddScoped<IMsToDoService, MsToDoService>();
 
 builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
