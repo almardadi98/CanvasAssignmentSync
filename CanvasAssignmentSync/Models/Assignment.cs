@@ -30,9 +30,5 @@ namespace CanvasAssignmentSync.Models
         [JsonPropertyName("html_url")]
         public Uri? HTMLURL { get; init; }
 
-        //public int CompareTo(Assignment other)
-        //{
-        //    return other.CreatedAt.CompareTo(CreatedAt);
-        //}
     }
 }

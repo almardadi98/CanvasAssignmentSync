@@ -1,11 +1,12 @@
 ﻿using CanvasAssignmentSync.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
 
 
 namespace CanvasAssignmentSync.Data
 {
-    public class CourseDbContext : DbContext
+    public class CourseDbContext : IdentityDbContext<IdentityUser>
     {
         public CourseDbContext(DbContextOptions<CourseDbContext> options) : base(options)
         {

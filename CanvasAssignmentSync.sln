@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CanvasAssignmentSync", "Can
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CanvasAssignmentSync.Tests", "CanvasAssignmentSync.Tests\CanvasAssignmentSync.Tests.csproj", "{574F35AE-1B82-4EA4-A1CF-8F179CAF5496}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CanvasAssignmentSync.Tests.UI", "CanvasAssignmentSync.Tests.UI\CanvasAssignmentSync.Tests.UI.csproj", "{B21A6E32-E1A4-4FDB-80DC-A99F34377EB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CanvasAssignmentSync.Tests.UI", "CanvasAssignmentSync.Tests.UI\CanvasAssignmentSync.Tests.UI.csproj", "{B21A6E32-E1A4-4FDB-80DC-A99F34377EB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

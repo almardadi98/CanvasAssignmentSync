@@ -29,30 +29,7 @@ namespace CanvasAssignmentSync.Repositories
             var msToDoOptions = new MsToDoOptions();
             var configSection = _configuration.GetSection(MsToDoOptions.MsToDo);
             configSection.Bind(msToDoOptions);
-            _tenantId = msToDoOptions.TenantId;
-            _clientId = msToDoOptions.ClientId;
-            _clientSecret = msToDoOptions.ClientSecret;
-            _scopes = msToDoOptions.Scopes ?? new List<string>() { "User.Read" };
-            // For authorization code flow, the user signs into the Microsoft
-            // identity platform, and the browser is redirected back to your app
-            // with an authorization code in the query parameters
-            var authorizationCode = GetAuthorizationCode();
-
-            // using Azure.Identity;
-            var options = new TokenCredentialOptions
-            {
-                AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
-            };
-
-            // https://docs.microsoft.com/dotnet/api/azure.identity.authorizationcodecredential
-            var authCodeCredential = new AuthorizationCodeCredential(
-                _tenantId, _clientId, _clientSecret, authorizationCode, options);
-
-
-
-            _client = new GraphServiceClient(authCodeCredential, _scopes);
-
-
+            
         }
 
         private string GetAuthorizationCode()

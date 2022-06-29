@@ -1,7 +1,6 @@
 ﻿@using CanvasAssignmentSync.Models
 @using Microsoft.Extensions.Configuration
 @using Syncfusion.Blazor.Inputs
-@inject IMsToDoService MsToDoService
 
 <div class="row">
     <div class="col"><hr></div>
@@ -37,8 +36,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var test = await MsToDoService.GetTaskLists();
-        Console.WriteLine("Ayooo");
     }
 
 
