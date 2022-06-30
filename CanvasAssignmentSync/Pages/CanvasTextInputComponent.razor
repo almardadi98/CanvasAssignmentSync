@@ -2,13 +2,13 @@
 @inject ICanvasService CanvasService
 
 <div class="row my-2">
-<label class="text-light">API Uri</label>
+<label class="">API Uri</label>
 <SfTextBox @ref="_apiUriTextBox" @bind-Value="@_apiUri" Input="UriValidator" ID="apiUriTextBox" ShowClearButton="true" Placeholder="https://canvas.instructure.com/api/v1/"></SfTextBox>
 </div>
 
 <div class="row my-2">
 
-<label class="text-light">API Key</label>
+<label class="">API Key</label>
 <SfTextBox @ref="_apiKeyTextBox" @bind-value="@_apiKey" Type="InputType.Password" ID="apiKeyTextBox" ShowClearButton="true" Placeholder="YourSecretKey"></SfTextBox>
 </div>
 

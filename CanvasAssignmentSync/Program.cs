@@ -3,6 +3,7 @@ using CanvasAssignmentSync.Data;
 using CanvasAssignmentSync.Models;
 using CanvasAssignmentSync.Repositories;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -21,18 +22,13 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 var services = builder.Services;
 var configuration = builder.Configuration;
 
 
-builder.Services.AddAuthentication()
-    .AddCookie()
-    .AddGoogle(googleOptions =>
-    {
-        googleOptions.CallbackPath = "/signin-google";
-        googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-        googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-    });
+
 
 builder.Services.AddDbContext<CourseDbContext>(options =>
 {
@@ -40,6 +36,22 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
     options.EnableSensitiveDataLogging();
 });
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<CourseDbContext>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+
+    })
+    .AddGoogle(googleOptions =>
+    {
+        googleOptions.CallbackPath = "/signin-google";
+        googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+        googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+    });
 
 builder.Services.AddScoped<ICanvasRepository, CanvasRepository>();
 builder.Services.AddScoped<ICanvasService, CanvasService>();
@@ -56,9 +68,6 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<CourseDbContext>();
 
 
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjQxMjM5QDMyMzAyZTMxMmUzMEwwL0wrV3lCM1BpcmVnN05aWGJuWjRycmZvM3ZYbXF0WEk5S25INzU0SE09");
