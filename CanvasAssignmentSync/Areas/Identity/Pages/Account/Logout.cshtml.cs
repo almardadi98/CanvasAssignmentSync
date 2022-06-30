@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CanvasAssignmentSync.Pages.Identity
+namespace CanvasAssignmentSync.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {

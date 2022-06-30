@@ -26,6 +26,7 @@ var configuration = builder.Configuration;
 
 
 builder.Services.AddAuthentication()
+    .AddCookie()
     .AddGoogle(googleOptions =>
     {
         googleOptions.CallbackPath = "/signin-google";
@@ -39,8 +40,6 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
     options.EnableSensitiveDataLogging();
 });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<CourseDbContext>();
 
 builder.Services.AddScoped<ICanvasRepository, CanvasRepository>();
 builder.Services.AddScoped<ICanvasService, CanvasService>();
@@ -57,6 +56,9 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<CourseDbContext>();
 
 
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjQxMjM5QDMyMzAyZTMxMmUzMEwwL0wrV3lCM1BpcmVnN05aWGJuWjRycmZvM3ZYbXF0WEk5S25INzU0SE09");
