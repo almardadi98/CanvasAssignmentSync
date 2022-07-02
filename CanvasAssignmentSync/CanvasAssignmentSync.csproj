@@ -12,6 +12,7 @@
     <PackageReference Include="bunit" Version="1.8.15" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.6" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.6" />
@@ -33,10 +34,6 @@
     <PackageReference Include="Syncfusion.Blazor" Version="20.1.0.55" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="20.1.0.57" />
     <PackageReference Include="xunit" Version="2.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Identity\Pages\Shared\" />
   </ItemGroup>
 
 </Project>

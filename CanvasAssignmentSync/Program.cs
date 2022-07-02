@@ -32,7 +32,7 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
     options.EnableSensitiveDataLogging();
 });
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
-options.SignIn.RequireConfirmedAccount = true)
+options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<CourseDbContext>()
     .AddDefaultTokenProviders();
 
@@ -45,8 +45,8 @@ builder.Services.AddAuthentication(options =>
 })
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
+        options.LoginPath = "/Identity/Account/Login";
+        options.LogoutPath = "/Identity/Account/Logout";
 
     })
     .AddGoogle(googleOptions =>
@@ -56,7 +56,13 @@ builder.Services.AddAuthentication(options =>
         googleOptions.SaveTokens = true;
         googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
         googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-    });
+    })
+    .AddMicrosoftAccount(microsoftOptions =>
+    {
+        microsoftOptions.ClientId = configuration["Authentication:Microsoft:ClientId"];
+        microsoftOptions.ClientSecret = configuration["Authentication:Microsoft:ClientSecret"];
+    })
+    ;
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
