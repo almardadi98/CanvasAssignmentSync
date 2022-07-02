@@ -14,12 +14,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.EntityFrameworkCore;
 using Syncfusion.Blazor;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,13 +31,18 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
     options.UseSqlite("Data source = Courses.db");
     options.EnableSensitiveDataLogging();
 });
-
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<CourseDbContext>()
-    .AddDefaultUI()
     .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+
+})
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
