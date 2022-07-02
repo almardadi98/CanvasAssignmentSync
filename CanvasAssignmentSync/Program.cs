@@ -31,8 +31,7 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
     options.UseSqlite("Data source = Courses.db");
     options.EnableSensitiveDataLogging();
 });
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
-options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>()
     .AddEntityFrameworkStores<CourseDbContext>()
     .AddDefaultTokenProviders();
 
