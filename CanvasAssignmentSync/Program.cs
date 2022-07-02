@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,9 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
 });
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<CourseDbContext>();
+    .AddEntityFrameworkStores<CourseDbContext>()
+    .AddDefaultUI()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -49,10 +52,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddGoogle(googleOptions =>
     {
         googleOptions.CallbackPath = "/signin-google";
+        googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
+        googleOptions.SaveTokens = true;
         googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
         googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
     });
 
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 builder.Services.AddScoped<ICanvasRepository, CanvasRepository>();
 builder.Services.AddScoped<ICanvasService, CanvasService>();
 builder.Services.AddScoped<IMsToDoRepository, MsToDoRepository>();

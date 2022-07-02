@@ -30,7 +30,11 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-
+    @RenderSection("scripts", required: false)
     <script src="_framework/blazor.server.js"></script>
 </body>
 </html>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}
