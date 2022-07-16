@@ -1,0 +1,72 @@
+﻿@using Contracts
+@using Services.Abstractions
+@inject IServiceManager ServiceManager
+<h3>Assignments</h3>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <td><strong>Name</strong></td>
+            <td><strong>Created at</strong></td>
+            <td><strong>Due at</strong></td>
+            <td><strong>Description</strong></td>
+        </tr>
+    </thead>
+    <tbody>
+            @if (assignmentList is null)
+            {
+                <tr>
+                    <td colspan="4">
+                        <div class="d-flex justify-content-center">
+                             <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            } else {
+                foreach(var assignment in assignmentList)
+                {
+                    <tr>
+                        <td>@assignment.Name</td>    
+                        <td>@(assignment.CreatedAt.ToString("dd/MM/yyyy"))</td>    
+                        <td>@assignment.DueAt?.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <div class="control-section accordion-control-section">
+                                <SfAccordion>
+                                    <AccordionItems>
+                                        <AccordionItem Expanded="false" Header="See description" IconCss="e-athletics e-acrdn-icons">
+                                            <ContentTemplate>
+                                                @((MarkupString)assignment?.Description)
+                                            </ContentTemplate>
+                                        </AccordionItem>
+                                    </AccordionItems>
+                                </SfAccordion>
+                            </div>
+                        </td>
+                    </tr>
+
+                }
+            }
+    </tbody>
+</table>
+
+
+
+@code {
+    private List<AssignmentDto> assignmentList;
+    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+    public void Dispose()
+    {
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource?.Dispose();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var courses = await ServiceManager.CanvasService.GetCourses(cancellationTokenSource.Token);
+
+        var course = courses.First();
+        assignmentList = (await ServiceManager.CanvasService.GetAssignments(course.Id, cancellationTokenSource.Token)).ToList();
+    }
+
+
+}

@@ -1,0 +1,43 @@
+﻿@using Syncfusion.Blazor.Inputs
+
+<div class="row">
+    <div class="col"><hr></div>
+    <div class="col-auto"><h1 class="">Microsoft To-Do</h1></div>
+    <div class="col"><hr></div>
+</div>
+
+<div class="row my-2">
+    <label class="">Client Id</label>
+    <SfTextBox @ref="_clientIdTextBox" @bind-Value="@_clientId" Input="ClientIdValidator" ShowClearButton="true" Placeholder="xxxx-xxxx-xxxx"></SfTextBox>
+</div>
+
+<div class="row my-2">
+
+    <label class="">Client Secret</label>
+    <SfTextBox @ref="_clientSecretTextBox" @bind-value="@_clientSecret" ShowClearButton="true" Placeholder="xxxx-xxxx-xxxx"></SfTextBox>
+</div>
+
+
+
+@code {
+    private SfTextBox _clientIdTextBox;
+    private string _clientId;
+
+
+    private SfTextBox _clientSecretTextBox;
+    private string _clientSecret;
+
+    private void ClientIdValidator()
+    {
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+
+    private void HandleValidSubmit()
+    {
+    }
+}

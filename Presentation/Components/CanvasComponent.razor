@@ -1,0 +1,41 @@
+﻿@using Contracts
+@using Services.Abstractions
+@inject ICanvasService CanvasService
+
+
+<div class="row">
+    <div class="col"><hr></div>
+    <div class="col-auto"><h1 class="">Canvas</h1></div>
+    <div class="col"><hr></div>
+</div>
+<div class="row mb-4">
+    <CanvasTextInputComponent></CanvasTextInputComponent>
+</div>
+
+<div class="row">
+<CourseGridComponent></CourseGridComponent>
+</div>
+
+@code {
+    private List<CourseDto>? courseList;
+    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+    public void Dispose()
+    {
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource?.Dispose();
+    }
+
+    protected override void OnInitialized()
+    {
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        courseList = (await CanvasService.GetCourses(cancellationTokenSource.Token)).ToList();
+    }
+    
+
+    private void HandleValidSubmit()
+    {
+    }
+}

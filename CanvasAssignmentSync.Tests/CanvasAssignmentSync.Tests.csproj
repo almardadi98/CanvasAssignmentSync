@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CanvasAssignmentSync\CanvasAssignmentSync.csproj" />
+    <ProjectReference Include="..\CanvasAssignmentSync\Web.csproj" />
   </ItemGroup>
 
 </Project>

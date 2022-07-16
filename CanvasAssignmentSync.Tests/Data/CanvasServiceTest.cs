@@ -1,5 +1,5 @@
 ﻿using CanvasAssignmentSync.Data;
-using CanvasAssignmentSync.Models;
+using Domain.Models.Canvas;
 
 namespace CanvasAssignmentSync.Tests.Data
 {

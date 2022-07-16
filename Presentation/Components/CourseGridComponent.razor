@@ -1,0 +1,58 @@
+﻿@page "/testing"
+@using Contracts
+@using Services.Abstractions
+@using Syncfusion.Blazor.Grids
+@inject IServiceManager ServiceManager
+
+
+<div class="row">
+    @*TODO Sorting is bugged out. Repeated sorting selects rows randomly(?)*@
+    <SfGrid DataSource="@Courses" @ref="_courseGrid" AllowTextWrap="false" AllowGrouping="false"
+            AllowSorting="false" AllowSelection="true" AllowPaging="false" AllowFiltering="true" Height="auto">
+        <GridSelectionSettings Mode="SelectionMode.Row" CheckboxOnly="true" PersistSelection="false"
+                               Type="SelectionType.Multiple"></GridSelectionSettings>
+        <GridColumns>
+            <GridColumn Field="@nameof(CourseDto.Name)" HeaderText="Name" IsPrimaryKey="true" TextAlign="TextAlign.Left" Width="120">
+            </GridColumn>
+            <GridColumn Field="@nameof(CourseDto.StartAt)" HeaderText="Start Date" Format="d" Type="ColumnType.Date"
+                        TextAlign="TextAlign.Center" Width="130"></GridColumn>
+            <GridColumn HeaderText="Sync status" Type="ColumnType.Boolean" Width="50">
+                <Template>
+                    <span>hmmmm.</span>
+                </Template>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+<style type="text/css" class="cssStyles">
+    .e-grid .e-altrow {
+        /*background-color: #fafafa;*/
+    }
+
+    .e-grid .e-row .e-active {
+        /*background-color: #bbff94;*/
+
+    }
+</style>
+
+@code {
+    private List<CourseDto>? Courses { get; set; }
+    private SfGrid<CourseDto> _courseGrid = null!;
+    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+    public void Dispose()
+    {
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource?.Dispose();
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Courses = (await ServiceManager.CanvasService.GetCourses(cancellationTokenSource.Token)).ToList();
+    }
+
+
+    
+}
