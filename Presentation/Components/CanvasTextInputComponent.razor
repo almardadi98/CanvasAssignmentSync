@@ -1,32 +1,52 @@
-﻿@using Services.Abstractions
+﻿@using Contracts
+@using Services.Abstractions
+@using Microsoft.AspNetCore.Components.Web
 @using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Diagram
 @inject IServiceManager ServiceManager
 
 <div class="row my-2">
 <label class="">API Uri</label>
-<SfTextBox @ref="_apiUriTextBox" @bind-Value="@_apiUri" Input="UriValidator" ID="apiUriTextBox" ShowClearButton="true" Placeholder="https://canvas.instructure.com/api/v1/"></SfTextBox>
+<SfTextBox @ref="_apiUriTextBox"  @bind-Value="ApiUriString" Input="UriValidator" ID="apiUriTextBox" ShowClearButton="true" Placeholder="https://canvas.instructure.com/api/v1/"></SfTextBox>
 </div>
 
 <div class="row my-2">
 
 <label class="">API Key</label>
-<SfTextBox @ref="_apiKeyTextBox" @bind-value="@_apiKey" Type="InputType.Password" ID="apiKeyTextBox" ShowClearButton="true" Placeholder="YourSecretKey"></SfTextBox>
+<SfTextBox @ref="_apiKeyTextBox" @bind-value="ApiKey" Type="InputType.Password" ID="apiKeyTextBox" ShowClearButton="true" Placeholder="YourSecretKey"></SfTextBox>
 </div>
 
-
+<SfButton @onclick="SaveOrUpdate" IsPrimary="true">Save</SfButton>
 
 @code {
     private SfTextBox _apiUriTextBox;
-    private string _apiUri;
-    
-
     private SfTextBox _apiKeyTextBox;
-    private string _apiKey;
 
-    protected override void OnInitialized()
+    private string? ApiUriString;
+    private string? ApiKey;
+
+    private CanvasOptionsDto? CanvasOptions { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
+        CanvasOptions = await ServiceManager.DatabaseService.GetCanvasOptions();
+        if (CanvasOptions != null)
+        {
+            ApiUriString = CanvasOptions.ApiUri?.ToString();
+            ApiKey = CanvasOptions.ApiKey;
+        }
     }
 
+    private async Task SaveOrUpdate()
+    {
+        var canvasOptionsDto = new CanvasOptionsDto
+        {
+            ApiKey = ApiKey,
+            ApiUri = new Uri(ApiUriString, UriKind.Absolute)
+        };
+        await ServiceManager.DatabaseService.AddCanvasOptions(canvasOptionsDto);
+    }
 
     
     private void UriValidator(InputEventArgs args)

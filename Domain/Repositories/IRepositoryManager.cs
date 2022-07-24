@@ -11,5 +11,7 @@ namespace Domain.Repositories
         ICanvasRepository CanvasRepository { get; }
 
         IMsToDoRepository MsToDoRepository { get; }
+
+        IDatabaseRepository DatabaseRepository { get; }
     }
 }

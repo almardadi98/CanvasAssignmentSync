@@ -34,7 +34,7 @@ namespace Services
         }
 
 
-        public async Task<IEnumerable<AssignmentDto>> GetAssignments(string courseId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<AssignmentDto>> GetAssignments(int courseId, CancellationToken cancellationToken = default)
         {
             var assignments = await _repositoryManager.CanvasRepository.GetAssignments(courseId, cancellationToken);
             
@@ -43,7 +43,7 @@ namespace Services
             return assignmentsDto;
         }
 
-        public async Task<AssignmentDto?> GetAssignment(string courseId, string id, CancellationToken cancellationToken = default)
+        public async Task<AssignmentDto?> GetAssignment(int courseId, string id, CancellationToken cancellationToken = default)
         {
             var assignment = await _repositoryManager.CanvasRepository.GetAssignment(courseId, id, cancellationToken);
 

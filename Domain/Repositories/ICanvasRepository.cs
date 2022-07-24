@@ -1,4 +1,5 @@
 ﻿using Domain.Models.Canvas;
+using Domain.Settings;
 
 namespace Domain.Repositories
 {
@@ -8,9 +9,10 @@ namespace Domain.Repositories
 
         Task<Course?> GetCourse(string id, CancellationToken cancellationToken = default);
 
+        bool Connect(CanvasOptions? canvasOptions);
 
-        Task<IEnumerable<Assignment>> GetAssignments(string courseId, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Assignment>> GetAssignments(int courseId, CancellationToken cancellationToken = default);
 
-        Task<Assignment?> GetAssignment(string courseId, string id, CancellationToken cancellationToken = default);
+        Task<Assignment?> GetAssignment(int courseId, string id, CancellationToken cancellationToken = default);
     }
 }

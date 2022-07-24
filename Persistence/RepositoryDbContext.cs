@@ -1,26 +1,35 @@
 ﻿using System.Reflection;
 using Domain;
+using Domain.Models;
 using Domain.Models.Canvas;
 using Domain.Models.MsToDo;
+using Domain.Settings;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Settings;
 
 namespace Persistence
 {
-    public sealed class RepositoryDbContext : DbContext
+    public sealed class RepositoryDbContext : IdentityDbContext
     {
         public RepositoryDbContext(DbContextOptions options)
             : base(options)
         {
         }
 
+        public DbSet<Owner> Owners { get; set; }
 
-        public Uri CanvasApiUri;
+        public DbSet<CanvasOptions> CanvasOptions { get; set; }
 
-        public string CanvasApiKey;
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
 
-        public DbSet<Course> CourseSyncBlacklist;
+            modelBuilder.Entity<CanvasOptions>()
+                .Property(b => b.Id)
+                .ValueGeneratedOnAdd();
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) =>
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(RepositoryDbContext).Assembly);
+            base.OnModelCreating(modelBuilder);
+            //modelBuilder.ApplyConfigurationsFromAssembly(typeof(RepositoryDbContext).Assembly);
+        }
     }
 }

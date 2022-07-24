@@ -11,9 +11,9 @@ namespace Services.Abstractions
 
 
         // Assignment methods
-        Task<IEnumerable<AssignmentDto>> GetAssignments(string courseId, CancellationToken cancellationToken = default);
+        Task<IEnumerable<AssignmentDto>> GetAssignments(int courseId, CancellationToken cancellationToken = default);
 
-        Task<AssignmentDto?> GetAssignment(string courseId, string id, CancellationToken cancellationToken = default);
+        Task<AssignmentDto?> GetAssignment(int courseId, string id, CancellationToken cancellationToken = default);
 
     }
 }

@@ -4,6 +4,8 @@
     {
         public const string MsToDo = "MsToDo";
 
+        public int OwnerId { get; set; }
+
         public string? TenantId { get; set; } = string.Empty;
 
         public string? ClientId { get; set; } = string.Empty;

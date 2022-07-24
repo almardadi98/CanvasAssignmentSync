@@ -4,38 +4,59 @@ using Domain.Repositories;
 using Microsoft.Extensions.Configuration;
 using Persistence.Settings;
 using System.Net.Http.Headers;
+using System.Security.Claims;
+using Domain.Exceptions;
+using Domain.Settings;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence.Repositories
 {
     public class CanvasRepository : ICanvasRepository
     {
         private readonly HttpClient _httpClient;
-        private readonly RepositoryDbContext _repositoryDbContext;
-        private readonly CanvasOptions _canvasOptions = new();
+        private CanvasOptions? _canvasOptions;
 
-        public CanvasRepository(HttpClient httpClient, RepositoryDbContext dbContext)
+
+        public CanvasRepository(HttpClient httpClient, CanvasOptions? canvasOptions)
         {
             _httpClient = httpClient;
-            _repositoryDbContext = dbContext;
-
-            _canvasOptions.ApiUri = _repositoryDbContext.CanvasApiUri;
-            _canvasOptions.ApiKey = _repositoryDbContext.CanvasApiKey;
-
-
-            InitHttpClient();
+            _canvasOptions = canvasOptions;
+            InitHttpClient(_canvasOptions);
         }
 
 
         /// <summary>
+        /// Try initializing the httpclient.
+        /// </summary>
+        /// <param name="canvasOptions"></param>
+        /// <returns></returns>
+        public bool Connect(CanvasOptions? canvasOptions)
+        {
+            try
+            {
+                InitHttpClient(canvasOptions ?? _canvasOptions);
+                return true;
+            }
+            catch (NotConfiguredException e)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Configure the API endpoint and authorization header.
         /// </summary>
-        public void InitHttpClient()
+        public void InitHttpClient(CanvasOptions canvasOptions)
         {
-            _httpClient.BaseAddress = _canvasOptions.ApiUri;
+            if (canvasOptions == null)
+            {
+                throw new NotConfiguredException("Configuration for Canvas API is null.");
+            }
+            _httpClient.BaseAddress = canvasOptions.ApiUri;
 
             _httpClient
                 .DefaultRequestHeaders
-                .Authorization = new AuthenticationHeaderValue($"Bearer", $"{_canvasOptions.ApiKey}");
+                .Authorization = new AuthenticationHeaderValue($"Bearer", $"{canvasOptions.ApiKey}");
 
         }
 
@@ -60,13 +81,13 @@ namespace Persistence.Repositories
         /// <param name="courseId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<Assignment>> GetAssignments(string courseId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Assignment>> GetAssignments(int courseId, CancellationToken cancellationToken = default)
         {
             var assignments =  await _httpClient.GetFromJsonAsync<List<Assignment>?>($"courses/{courseId}/assignments", cancellationToken);
             return assignments ?? Enumerable.Empty<Assignment>();
         }
 
-        public async Task<Assignment?> GetAssignment(string courseId, string id, CancellationToken cancellationToken = default)
+        public async Task<Assignment?> GetAssignment(int courseId, string id, CancellationToken cancellationToken = default)
         {
             return await _httpClient.GetFromJsonAsync<Assignment?>($"courses/{courseId}/assignments/{id}", cancellationToken);
         }

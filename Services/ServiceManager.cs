@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Services.Abstractions;
 using Domain.Repositories;
+using Microsoft.AspNetCore.Http;
 
 namespace Services
 {
@@ -12,9 +13,11 @@ namespace Services
     {
         private readonly Lazy<ICanvasService> _lazyCanvasService;
         private readonly Lazy<IMsToDoService> _lazyMsToDoService;
+        private readonly IDatabaseService _databaseService;
 
         public ServiceManager(IRepositoryManager repositoryManager)
         {
+            _databaseService = new DatabaseService(repositoryManager);
             _lazyCanvasService = new Lazy<ICanvasService>(() => new CanvasService(repositoryManager));
             _lazyMsToDoService = new Lazy<IMsToDoService>(() => new MsToDoService(repositoryManager));
         }
@@ -23,6 +26,6 @@ namespace Services
 
         public IMsToDoService MsToDoService => _lazyMsToDoService.Value;
 
-
+        public IDatabaseService DatabaseService => _databaseService;
     }
 }

@@ -7,10 +7,11 @@ namespace Domain.Models.Canvas
     {
         public string? Name { get; init; }
 
-        public string Id { get; init; }
+        public int Id { get; init; }
 
         public string Uuid { get; init; }
 
+        [JsonPropertyName("start_at")]
         public DateTime StartAt { get; init; }
 
     }

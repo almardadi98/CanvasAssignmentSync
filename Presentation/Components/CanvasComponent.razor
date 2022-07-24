@@ -1,6 +1,6 @@
 ﻿@using Contracts
 @using Services.Abstractions
-@inject ICanvasService CanvasService
+@inject IServiceManager ServiceManager
 
 
 <div class="row">
@@ -31,7 +31,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        courseList = (await CanvasService.GetCourses(cancellationTokenSource.Token)).ToList();
+        courseList = (await ServiceManager.CanvasService.GetCourses(cancellationTokenSource.Token)).ToList();
     }
     
 

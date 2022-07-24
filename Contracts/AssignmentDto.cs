@@ -13,7 +13,7 @@ namespace Contracts
         public string? Name { get; init; }
 
         [JsonPropertyName("course_id")]
-        public string courseId { get; init; }
+        public int courseId { get; init; }
 
         [JsonPropertyName("due_at")]
         public DateTime? DueAt { get; set; }

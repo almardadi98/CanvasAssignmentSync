@@ -11,5 +11,7 @@ namespace Services.Abstractions
         ICanvasService CanvasService { get; }
 
         IMsToDoService MsToDoService { get; }
+
+        IDatabaseService DatabaseService { get; }
     }
 }

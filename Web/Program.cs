@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -5,13 +7,17 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.EntityFrameworkCore;
 using Syncfusion.Blazor;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Persistence;
+using Persistence.Repositories;
+using Services;
+using Services.Abstractions;
+using Web.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +25,17 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
+var connectionString = builder.Configuration.GetConnectionString("Database");
+builder.Services.AddDbContext<RepositoryDbContext>(options =>
+    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Web")));
 
 
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+        options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<RepositoryDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -51,12 +66,27 @@ builder.Services.AddAuthentication(options =>
     ;
 
 
-builder.Services.AddControllersWithViews();
 
 builder.Services.AddAuthorization(options =>
 {
     // By default, all incoming requests will be authorized according to the default policy
-    options.FallbackPolicy = options.DefaultPolicy;
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
+
+builder.Services.AddScoped<IAuthorizationHandler, CanvasOptionsIsOwnerAuthorizationHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, CanvasOptionsAdministratorsAuthorizationHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, CanvasOptionsManagerAuthorizationHandler>();
+
+
+builder.Services.AddScoped<IServiceManager, ServiceManager>();
+builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+
+builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
 
 builder.Services.AddRazorPages();
@@ -67,6 +97,17 @@ Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjQxMjM5QDMyMzAy
 builder.Services.AddSyncfusionBlazor(options => {});
 
 var app = builder.Build();
+
+
+// Run migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var dbServices = scope.ServiceProvider;
+
+    var context = dbServices.GetRequiredService<RepositoryDbContext>();
+    context.Database.Migrate();
+}
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -81,6 +122,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
 
 app.UseAuthentication();
 app.UseAuthorization();
